@@ -1,0 +1,53 @@
+### Test de connexion avec des identifiants valides
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "jean.dupont@email.com",
+    "password": "password"
+}
+
+### Test de connexion avec des identifiants invalides (mot de passe incorrect)
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "jean.dupont@email.com",
+    "password": "wrongpassword"
+}
+
+### Test de connexion avec un email qui n'existe pas
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "nonexistent@example.com",
+    "password": "somepassword"
+}
+
+### Test de connexion avec un email vide
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "",
+    "password": "jess"
+}
+
+### Test de connexion avec un mot de passe vide
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "jean.dupont@email.com",
+    "password": ""
+}
+
+### Test de connexion avec un format d'email invalide
+POST http://localhost:3000/api/signin
+Content-Type: application/json
+
+{
+    "email": "invalid-email",
+    "password": "jess"
+}

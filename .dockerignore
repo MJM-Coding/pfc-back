@@ -1,0 +1,5 @@
+# Dans le .dockerignore, on peut indiquer
+# des dossiers ou fichiers qui doivent ignorés par Docker
+
+node_modules
+

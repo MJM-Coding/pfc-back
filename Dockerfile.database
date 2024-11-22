@@ -1,0 +1,10 @@
+#! Dockerfile for the database
+
+FROM postgres
+
+
+COPY ./data/create_tables.sql /docker-entrypoint-initdb.d/create_tables.sql
+COPY ./data/seeding_tables.sql /docker-entrypoint-initdb.d/seeding_tables.sql
+
+
+EXPOSE 5432

@@ -1,0 +1,53 @@
+### --------------Lister toutes les alertes-----------------
+###! SANS TOKEN
+GET http://localhost:3000/api/ask
+
+
+###* AVEC TOKEN
+GET http://localhost:3000/api/ask
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiZW1haWwiOiJhbGljZS5iZXJuYXJkQGVtYWlsLmNvbSIsInJvbGUiOiJhc3NvY2lhdGlvbiIsImlhdCI6MTczMTQ4NzQ4NywiZXhwIjoxNzMxNDkxMDg3fQ.04148tRpkxGKG1a4DUMTHBaO87qdL4Z1U8OXdw-LpjY
+
+#---------------Obtenir le détail d'une alerte -----------
+
+###! SANS TOKEN
+GET http://localhost:3000/api/ask/3
+
+
+###* AVEC TOKEN 
+GET http://localhost:3000/api/ask/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiZW1haWwiOiJhbGljZS5iZXJuYXJkQGVtYWlsLmNvbSIsInJvbGUiOiJhc3NvY2lhdGlvbiIsImlhdCI6MTczMTQ4NzQ4NywiZXhwIjoxNzMxNDkxMDg3fQ.04148tRpkxGKG1a4DUMTHBaO87qdL4Z1U8OXdw-LpjY
+
+
+#---------------Créer une nouvelle alerte -----------------------
+
+###  ! SANS TOKEN
+POST http://localhost:3000/api/ask
+Content-Type: application/json
+
+{
+  "id_family": 3,
+  "id_animal": 9
+}
+
+###* AVEC TOKEN
+POST http://localhost:3000/api/ask
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImVtYWlsIjoicGhpbGlwcGUuYm91cmdlb2lzQGVtYWlsLmNvbSIsInJvbGUiOiJmYW1pbHkiLCJpYXQiOjE3MzE0ODc1MzUsImV4cCI6MTczMTQ5MTEzNX0.Cs6NUwY6Clb-B4c3ck4eA8S2BeZCjQFiFEa4c79ZsRY
+Content-Type: application/json
+
+{
+  "id_family": 1,
+  "id_animal": 12
+}
+
+#------------------Modifier une alerte--------------------------
+
+### !  SANS TOKEN
+PATCH http://localhost:3000/api/ask/1
+Content-Type: application/json
+
+{
+  "status": "en cours"
+}
+
+
+

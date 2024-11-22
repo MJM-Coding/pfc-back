@@ -1,0 +1,124 @@
+### Visulaiser tous les utilisateurs
+GET http://localhost:3000/api/user
+Content-Type: application/json
+
+### Visulaiser un utilisateur
+GET http://localhost:3000/api/user/1
+Content-Type: application/json
+
+### Visulaiser un utilisateur qui n'existe pas
+GET http://localhost:3000/api/user/1000
+Content-Type: application/json
+
+### Requête pour tester l'inscription  pour un utilisateur de type "family"
+POST http://localhost:3000/api/user 
+Content-Type: application/json
+
+{
+  "firstname": "test",
+  "lastname": "FAmilyTest",
+  "email": "testFamqsilyd28@example.com",
+  "password": "Fa@78mily",
+  "family":{
+    "address": "123 Main St",
+    "postal_code": "12345",
+    "city": "Paris",
+    "phone": "0123456789"
+  }
+}
+
+### Requête pour tester l'inscription pour un utilisateur de type "association"
+POST http://localhost:3000/api/user 
+Content-Type: application/json
+
+{
+  "firstname": "test",
+  "lastname": "asso",
+  "email": "associatioln1541@exemple.com",
+  "password": "Association1990*",
+  "association":{
+    "address": "123 Main St",
+    "postal_code": "12345",
+    "city": "Paris",
+    "phone": "0123456789",
+    "rna_number": "W102000203",
+    "representative": "asso"
+  }
+
+}
+
+# Toker famille eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImVtYWlsIjoidGVzdEZhbWlseWQyQGV4YW1wbGUuY29tIiwicm9sZSI6ImZhbWlseSIsImlhdCI6MTczMDk4MzE0NywiZXhwIjoxNzMwOTg2NzQ3fQ.0EEraE-Y-OnGXOtfj_2gdgcMNA0ZzJcJhH4wWDgEcTk
+# Token association eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzIsImVtYWlsIjoiYXNzbzkxMTUyNTVAc3hhc21wbGUuY29tIiwicm9sZSI6ImFzc29jaWF0aW9uIiwiaWF0IjoxNzMwOTgzMjA3LCJleHAiOjE3MzA5ODY4MDd9.2mSVcFkl85pRXg_GhaubUtQ5KDsnY0k3irHOKFOry_o
+### Visualiser tous les utilisateurs
+GET http://localhost:3000/api/user
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzIsImVtYWlsIjoiYXNzbzkxMTUyNTVAc3hhc21wbGUuY29tIiwicm9sZSI6ImFzc29jaWF0aW9uIiwiaWF0IjoxNzMwOTgzMjA3LCJleHAiOjE3MzA5ODY4MDd9.2mSVcFkl85pRXg_GhaubUtQ5KDsnY0k3irHOKFOry_o
+
+
+#------------------Supprimer un utilisateur (asso, family admin)------------------
+
+###! SANS TOKEN
+DELETE http://localhost:3000/api/user/27
+Authorization: Bearer 
+Accept: application/json
+
+
+###* AVEC TOKEN
+DELETE http://localhost:3000/api/user/17
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoianVsaWVuLnZhc3NldXJAZW1haWwuY29tIiwicm9sZSI6ImZhbWlseSIsImlhdCI6MTczMTQyMjgyNiwiZXhwIjoxNzMxNDI2NDI2fQ.R5wW-bH9Gb6LdqBISbeBSrv-AddTBldaHn5evtCBePY
+Accept: application/json
+
+
+#------------------Modifier un utilisateur (asso family)---------------------
+
+###! SANS TOKEN
+PATCH http://localhost:3000/api/user/17
+Content-Type: application/json
+
+{
+  "firstname": "Jean",
+  "email": "jeandupont@email.com",
+  "password": "password",
+  "family": {
+    "postal_code": "27630"
+  }
+}
+
+### Modifier une association
+PATCH http://localhost:3000/api/user/7
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJtYXJpZS5sZWZlYnZyZUBlbWFpbC5jb20iLCJyb2xlIjoiYXNzb2NpYXRpb24iLCJpYXQiOjE3MzE0MjQxMjksImV4cCI6MTczMTQyNzcyOX0.5yrnUCvB7PAhpSSR_HMbrOUtPRK5Fn91zZ0RZhqeO2M
+
+{
+  "association": {
+    "address": "rue des Quesadillas en folie de fou"
+  }
+}
+
+###* AVEC TOKEN
+PATCH http://localhost:3000/api/user/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJzb3BoaWUubWFydGluQGVtYWlsLmNvbSIsInJvbGUiOiJmYW1pbHkiLCJpYXQiOjE3MzE0MjQwNDYsImV4cCI6MTczMTQyNzY0Nn0.dtu7Kzgb5Vkwjk1pspiZuEFmPxJELvwCN89xTkEI6Tc
+
+{
+  "firstname": "Jean",
+  "email": "jeandupont@email.com",
+  "password": "bonjourLemonde2024!",
+  "family": {
+    "address": "rue des Quesadillas en folie"
+  }
+}
+
+###* AVEC TOKEN
+PATCH http://localhost:3000/api/user/1
+Content-Type: application/json
+
+{
+  "firstname": "Jean",
+  "email": "jeandupont@email.com",
+  "password": "password98@M",
+  "family": {
+    "address": "rue des Quesadillas en folie"
+  }
+}
+#---------------------------------------------
