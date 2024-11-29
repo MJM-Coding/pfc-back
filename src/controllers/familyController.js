@@ -14,7 +14,7 @@ export const familyController = {
     const families = await Family.findAll({
       include: [
         { association: "animalsFamily" },
-        { association: "user", attributes: { exclude: ["password"] } },
+        { association: "user"/* , attributes: { exclude: ["password"] } */ },
       ],
     });
     res.status(200).json(families);
@@ -26,7 +26,7 @@ export const familyController = {
     const family = await Family.findByPk(familyId, {
       include: [
         { association: "animalsFamily" },
-        { association: "user", attributes: { exclude: ["password"] } },
+        { association: "user"/* , attributes: { exclude: ["password"] } */ },
       ],
     });
 
@@ -42,7 +42,7 @@ export const familyController = {
     const updateFamily = req.body;
 
     const family = await Family.findByPk(familyId, {
-      attributes: { exclude: "password" },
+     /*  attributes: { exclude: "password" }, */
       include: "user",
     });
 
@@ -86,11 +86,12 @@ export const familyController = {
           }
           
           // Hachage du mot de passe
-          userData.password = Scrypt.hash(updateFamily.user.newPassword);
+          userData.password =  await Scrypt.hash(updateFamily.user.newPassword);
         }
 
         // Mise à jour du User en BDD
-        await user.update(userData);
+        await user.update(userData, { fields: ["password"] }); // Spécifiez les champs à mettre à jour
+
       }
 
       //! Gestion de l'image de profil

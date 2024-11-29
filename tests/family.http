@@ -12,35 +12,32 @@ Accept: application/json
 #----------------Récupérer une famille par son ID (admin asso)----------------
 
 ###! SANS TOKEN
-GET http://localhost:3000/api/family/1
+GET http://localhost:3000/api/family/35
 Accept: application/json
 
 
 ### AVEC TOKEN
-GET http://localhost:3000/api/family/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqZWFuLmR1cG9udEBlbWFpbC5jb20iLCJyb2xlIjoiZmFtaWx5IiwiaWF0IjoxNzMxNjA0ODI5LCJleHAiOjE3MzE2MDg0Mjl9.2e84IJRtSfDtScuO-FaxPSjSbUPgU2ES71KmRP_MURM
+GET http://localhost:3000/api/family/24
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDMsImVtYWlsIjoiamVzc21lbnpvQGplc3MuZnIiLCJyb2xlIjoiZmFtaWx5IiwiaWF0IjoxNzMyNzg0MDg4LCJleHAiOjE3MzI3ODc2ODh9.anyn_S5oil4Z8acdZOvvt_AOZPTPLp40-ysS6-WHeT0
 Accept: application/json
 
 ### modification d'une family
-PATCH http://localhost:3000/api/family/1
+PATCH http://localhost:3000/api/family/35
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqZWFuLmR1cG9udEBlbWFpbC5jb20iLCJyb2xlIjoiZmFtaWx5IiwiaWF0IjoxNzMxODUzMTY1LCJleHAiOjE3MzE4NTY3NjV9.XrYI0bZsJIld9YZtYdwn8QxULVFKcNN0ifrEnfwA2-M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJqZWFuLmR1cG9udEBlbWFpbC5jb20iLCJyb2xlIjoiZmFtaWx5IiwiaWF0IjoxNzMyNjIzODc1LCJleHAiOjE3MzI2Mjc0NzV9.LvAO9Gjyx-5pD9dt-7RyibzlTK4Z1xJzWKgXOMJyDMo
 
 {
     
 "address": "123 Rue de la Pluie",
 "city": "Parici",
-"description": "",
-"garden": false,
-"number_of_animals": 0,
-"number_of_children": 0,
 "phone": "0987654321",
 "postal_code": "75000",
-"profile_photo": "images/users/Dupontjean-fa.webp",
+"imageUrl": "https://cdn.brazil-selection.com/wp-content/uploads/2022/03/animaux-du-bresil-slide-1024x925.webp",
 "user": {
-    "email": "jean.ducon@email.com",
-    "firstname": "Jean",
-    "lastname": "Ducon"
+     "currentPassword": "Fa@78mily",
+        "newPassword": "Menzo0607?",
+        "confirmPassword": "Menzo0607?"
+
 }
 
 }

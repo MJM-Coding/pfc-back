@@ -7,7 +7,7 @@ GET http://localhost:3000/api/associations
 Accept: application/json
 
 ### Requête GET pour récupérer une association par son ID
-GET http://localhost:3000/api/association/7
+GET http://localhost:3000/api/association/49
 Accept: application/json
 
 ### Requête GET pour récupérer une association par son ID avec erreur
@@ -15,18 +15,20 @@ GET http://localhost:3000/api/association/1000
 Accept: application/json
 
 ### Requête patch pour modifier une asso
-PATCH http://localhost:3000/api/association/2
+PATCH http://localhost:3000/api/association/48
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJtYXJpZS5sZWZlYnZyZUBlbWFpbC5jb20iLCJyb2xlIjoiYXNzb2NpYXRpb24iLCJpYXQiOjE3MzE0Mzk4ODcsImV4cCI6MTczMTQ0MzQ4N30.w2SmTTkcvMJ41Nfa0YtlHpWMExd6Noju4D57p-T1t_Y
 
 {
     "representative": "La fete du chat",
     "address": "rue du gros minet",
     "user": {
         "lastname": "CHACHA",
-        "password": "J'aimelesanimaux2020"
+        "currentPassword": "Associationss19d0*",
+        "newPassword": "Jessica0607?",
+        "confirmPassword": "Jessica0607?"
     }
 }
+
 
 ### Requête patch pour modifier une asso et son user
 PATCH http://localhost:3000/api/association/3

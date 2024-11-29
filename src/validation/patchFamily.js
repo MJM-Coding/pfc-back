@@ -8,17 +8,20 @@ export const patchSchema = Joi.object({
     /^0[1-9][0-9]{8}$/,
     "Merci de renseigner un numéro de téléphone"
   ),
-  number_of_children: Joi.number().integer(),
-  number_of_animals: Joi.number().integer(),
-  garden: Joi.boolean(),
-  description: Joi.string().allow(''),
-  profile_photo: Joi.string(), // Si vous souhaitez conserver ce champ
+  number_of_children: Joi.number().integer().optional().allow(null),
+  number_of_animals: Joi.number().integer().optional().allow(null),
+  garden: Joi.boolean().optional().allow(null),
+  description: Joi.string().allow('').optional().allow(null),
+  profile_photo: Joi.string().optional().allow(null),// Si vous souhaitez conserver ce champ
   id_user: Joi.number().integer(),
   user: Joi.object({
     firstname: Joi.string(),
     lastname: Joi.string(),
     email: Joi.string().email(),
     password: Joi.string(),
+    currentPassword: Joi.string().optional(), // Nouveau champ pour le mot de passe actuel
+    newPassword: Joi.string().optional(), // Nouveau champ pour le nouveau mot de passe
+    confirmPassword: Joi.string().optional(), // Nouveau champ pour la confirmation du mot de passe
   }),
-  imageUrl: Joi.string().uri().optional(), //ligne pour permettre imageUrl
+  imageUrl: Joi.string().uri().optional().allow(null), //ligne pour permettre imageUrl
 });

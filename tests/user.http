@@ -17,7 +17,7 @@ Content-Type: application/json
 {
   "firstname": "test",
   "lastname": "FAmilyTest",
-  "email": "testFamqsilyd28@example.com",
+  "email": "jess@examppppple.com",
   "password": "Fa@78mily",
   "family":{
     "address": "123 Main St",
@@ -34,14 +34,14 @@ Content-Type: application/json
 {
   "firstname": "test",
   "lastname": "asso",
-  "email": "associatioln1541@exemple.com",
-  "password": "Association1990*",
+  "email": "9898999@mk.fr",
+  "password": "Associationss19d0*",
   "association":{
     "address": "123 Main St",
     "postal_code": "12345",
     "city": "Paris",
     "phone": "0123456789",
-    "rna_number": "W102000203",
+    "rna_number": "W104777483",
     "representative": "asso"
   }
 
@@ -78,16 +78,16 @@ Content-Type: application/json
 {
   "firstname": "Jean",
   "email": "jeandupont@email.com",
-  "password": "password",
+  "password": "Menzo0607?",
   "family": {
     "postal_code": "27630"
   }
 }
 
 ### Modifier une association
-PATCH http://localhost:3000/api/user/7
+PATCH http://localhost:3000/api/user/17
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJtYXJpZS5sZWZlYnZyZUBlbWFpbC5jb20iLCJyb2xlIjoiYXNzb2NpYXRpb24iLCJpYXQiOjE3MzE0MjQxMjksImV4cCI6MTczMTQyNzcyOX0.5yrnUCvB7PAhpSSR_HMbrOUtPRK5Fn91zZ0RZhqeO2M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzksImVtYWlsIjoicmFzbGVjdWxAbWsuZnIiLCJyb2xlIjoiYXNzb2NpYXRpb24iLCJpYXQiOjE3MzI3MTU3MTIsImV4cCI6MTczMjcxOTMxMn0.mPl24BnLxQU3RrBvjsPl8rKvDUZha4U1HWcBFWYeIKk
 
 {
   "association": {

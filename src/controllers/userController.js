@@ -8,7 +8,7 @@ export const userController = {
   //! récupérer tous les utilisateurs
   getAllUsers: async (req, res) => {
     const users = await User.findAll({
-      attributes: {exclude: ["password"]},
+     /*  attributes: {exclude: ["password"]}, */
       include: [
         {association: "association"},
         {association: "family"}
@@ -20,7 +20,7 @@ export const userController = {
   getOneUser: async (req, res) => {
     const userId = req.params.id;
     const user = await User.findByPk(userId, {
-      attributes: {exclude: ["password"]},
+     /*  attributes: {exclude: ["password"]}, */
       include: [
         {association: "association",},
         {association: "family"}
@@ -42,7 +42,7 @@ export const userController = {
     const updateUser = req.body;
 
     const user = await User.findByPk(userId, {
-      attributes: {exclude: ["password"]},
+    /*   attributes: {exclude: ["password"]}, */
       include: [
         {association: "association"},
         {association: "family"}

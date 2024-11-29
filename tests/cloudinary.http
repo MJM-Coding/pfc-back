@@ -1,9 +1,9 @@
 ###! Mettre à jour la photo de profil d'une famille
-PATCH http://localhost:3000/api/family/2
+PATCH http://localhost:3000/api/family/1
 Content-Type: application/json
 
 {
-  "imageUrl": "https://img.freepik.com/photos-premium/chat-vetu-couleurs-danse-enthousiasme-fond-vibrant-image-capricieuse-ludique-chat-portant-vetements-vibrants-lunettes-soleil_73523-16328.jpg?semt=ais_hybrid"
+  "profile_photo": "https://img.freepik.com/photos-premium/chat-vetu-couleurs-danse-enthousiasme-fond-vibrant-image-capricieuse-ludique-chat-portant-vetements-vibrants-lunettes-soleil_73523-16328.jpg?semt=ais_hybrid"
 }
 
 

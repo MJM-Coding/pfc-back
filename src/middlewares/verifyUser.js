@@ -2,7 +2,7 @@ import {Association, Family, User} from "../models/index.js";
 
 export function verifyFamily () {
     return async function (req, res, next) {
-        const familyId = req.params.id;
+        const familyId = req.params.id || req.params.familyId;
 
         const family = await Family.findByPk(familyId);
         if (!family) {
@@ -24,6 +24,7 @@ export function verifyFamily () {
 export function verifyAssociation () {
     return async function (req, res, next) {
         const associationId = req.params.id || req.params.associationId;
+
         const association = await Association.findByPk(associationId);
         if (!association) {
             return res.status(404).json({

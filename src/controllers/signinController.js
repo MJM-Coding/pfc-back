@@ -50,12 +50,24 @@ export const signinController = {
 
   // Génération du token JWT
     const token = generateToken(user);
+    // Récupération des données d'association si elles existent
+    const association = user.association; // Récupération correcte de l'association
 
     res.status(200).json({
       message: "Connexion réussie",
       token,
-      user: { email: user.email, role: user.role, id: user.id, id_family: user.family ? user.family.id : null, id_association: user.association ? user.association.id : null},
-    });
+      user: {firstname: user.firstname,
+         email: user.email,
+          role: user.role,
+           id: user.id,
+            id_family: user.family ? user.family.id : null,
+            id_association: user.association ? user.association.id : null,
+            representative:association ? association.representative : null
+  
+            },
+            
+          });
+          console.log(user);
   },
 
   //! Méthode pour rafraîchir le token JWTasync refreshToken(req, res) {

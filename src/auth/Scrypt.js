@@ -18,11 +18,12 @@ class Scrypt {
       N: 131072,
       maxmem: 134220800,
     }).toString("hex");
-
+    
+    /* console.log("Mot de passe haché :", hashedPassword); */
     // On concatène le hash avec le sel pour obtenir le mot de passe hashé final à stocker en BDD.
     return `${buffer}.${salt}`;
   }
-
+  
   //! Cette méthode va comparer un mot de passe clair avec un mot de passe hashé
   //! et retourner un booléen indiquant si les deux correspondent.
   // Elle sera appelée lors de la tentative de connexion :

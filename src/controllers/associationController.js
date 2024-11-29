@@ -13,7 +13,7 @@ export const associationController = {
   getAllAssociations: async (req, res) => {
     const associations = await Association.findAll({
       include: [
-        { association: "user", attributes: { exclude: ["password"] } }, // Inclut les animaux associés à chaque association
+        { association: "user"/* , attributes: { exclude: ["password"] }  */}, // Inclut les animaux associés à chaque association
         { association: "animals" }, // Inclut les utilisateurs associés à chaque association
       ],
     });
@@ -25,7 +25,7 @@ export const associationController = {
     const { id: associationId } = req.params;
     const association = await Association.findByPk(associationId, {
       include: [
-        { association: "user", attributes: { exclude: ["password"] } }, // Inclut les animaux associés à chaque association
+        { association: "user"/* , attributes: { exclude: ["password"] }  */}, // Inclut les animaux associés à chaque association
         { association: "animals" }, // Inclut les utilisateurs associés à chaque association
       ],
     });
@@ -89,8 +89,9 @@ export const associationController = {
           ...updateAssociation.user,
           id: user.id,
         };
+        console.log("Corps de la requête :", req.body);
 
-        // Gestion du changement de mot de passe
+        //! Gestion du changement de mot de passe
         if (updateAssociation.user.currentPassword && updateAssociation.user.newPassword && updateAssociation.user.confirmPassword) {
           // Vérification du mot de passe actuel
           const isCurrentPasswordValid = await Scrypt.compare(updateAssociation.user.currentPassword, user.password);
@@ -99,7 +100,7 @@ export const associationController = {
             return res.status(400).json({ message: "Le mot de passe actuel est incorrect." });
           }
 
-          // Vérification que le nouveau mot de passe et sa confirmation correspondent
+          //! Vérification que le nouveau mot de passe et sa confirmation correspondent
           if (updateAssociation.user.newPassword !== updateAssociation.user.confirmPassword) {
             await transaction.rollback();
             return res.status(400).json({ message: "Le nouveau mot de passe et sa confirmation ne correspondent pas." });
@@ -112,37 +113,64 @@ export const associationController = {
               message: "Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.",
             });
           }
-          
+          console.log("Contenu de updateAssociation.user :", updateAssociation.user);
+          if (updateAssociation.user.newPassword) {
+            console.log("Avant hachage :", updateAssociation.user.newPassword);
           // Hachage du mot de passe
           userData.password = Scrypt.hash(updateAssociation.user.newPassword);
         }
+        console.log("Après hachage :", userData.password);
+        // Appliquez explicitement la mise à jour au modèle utilisateur
+user.password = userData.password; // S'assurer que le modèle a le mot de passe mis à jour
+        }
+
 
         // Mise à jour du User en BDD
-        await user.update(userData);
+        await user.update(userData, { fields: ["password"] }); // Spécifiez les champs à mettre à jour
+
       }
 
-      // Mettre à jour les données de l'association
-      const associationData = {
-        ...association.get(),
-        ...updateAssociation,
-        user: user.get(),
-        id: association.id,
-      };
+   // Construire les données pour la mise à jour
+   const associationData = {
+    ...association.get(),
+    ...updateAssociation,
+    user: user.get(),
+    id: association.id,
+  };
+  
+  console.log("Données de l'association avant mise à jour :", associationData);
 
-      await association.update(associationData);
+  // Mise à jour de l'association
+  await association.update(associationData);
+  console.log("Mise à jour de l'association effectuée avec succès.");
 
-      const associationObject = association.get({ plain: true });
-      if (associationObject.user) {
-        delete associationObject.user.password;
-      }
+  // Obtenir un objet plain pour manipulation
+  const associationObject = association.get({ plain: true });
+  console.log("Objet association après mise à jour :", associationObject);
 
-      await transaction.commit();
+  // Supprimer le mot de passe si présent
+  if (associationObject.user) {
+    console.log("Suppression du champ 'password' de l'utilisateur...");
+    delete associationObject.user.password;
+  }
 
-      res.status(201).json(associationObject);
-    } catch (error) {
-      await transaction.rollback();
-      throw new HttpError(500, "Error while updating user");
-    }
+  // Commit de la transaction
+  console.log("Commit de la transaction...");
+  await transaction.commit();
+
+  // Réponse au client
+  console.log("Réponse au client avec association mise à jour :", associationObject);
+  res.status(201).json(associationObject);
+} catch (error) {
+  console.error("Erreur lors de la mise à jour de l'association :", error);
+  
+  // Rollback de la transaction en cas d'erreur
+  console.log("Rollback de la transaction...");
+  await transaction.rollback();
+
+  // Lever une erreur HTTP
+  throw new HttpError(500, "Error while updating user");
+}
   },
 
   //! Supprimer une association
