@@ -90,7 +90,7 @@ export const familyController = {
         }
 
         // Mise à jour du User en BDD
-        await user.update(userData, { fields: ["password"] }); // Spécifiez les champs à mettre à jour
+        await user.update(userData); // Spécifiez les champs à mettre à jour
 
       }
 

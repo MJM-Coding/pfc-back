@@ -43,7 +43,7 @@ export const associationController = {
     const updateAssociation = req.body;
 
     const association = await Association.findByPk(associationId, {
-      attributes: { exclude: "password" },
+     /*  attributes: { exclude: "password" }, */
       include: "user",
     });
 
@@ -126,7 +126,7 @@ user.password = userData.password; // S'assurer que le modèle a le mot de passe
 
 
         // Mise à jour du User en BDD
-        await user.update(userData, { fields: ["password"] }); // Spécifiez les champs à mettre à jour
+        await user.update(userData); // Spécifiez les champs à mettre à jour
 
       }
 
