@@ -48,16 +48,16 @@ INSERT INTO family (address, postal_code, city, phone, number_of_children, numbe
 
 -- Insertion dans la table "association"
 INSERT INTO association (rna_number, representative, address, postal_code, city, phone, description, status, profile_photo, id_user) VALUES
-('W123456789', 'Pierre Dubois', '10 Rue des Associations', '69000', 'Lyon', '0654321987', 'Association de protection des chiens et chats', 'actif', 'images/users/Duboispierre-asso.webp', 6),
-('W987654321', 'Marie Lefebvre', '20 Avenue des Bénévoles', '13000', 'Marseille', '0798765432', 'Refuge pour chiens et chats en détresse', 'actif', 'images/users/Lefebvremarie-asso.webp', 7),
-('W234567890', 'Alice Bernard', '30 Rue du Secours', '31000', 'Toulouse', '0612345678', 'Refuge pour animaux abandonnés et maltraités', 'actif', 'images/users/Bernardalice-asso.webp', 8),
-('W345678901', 'Paul Thomas', '40 Avenue des Animaux', '44000', 'Nantes', '0723456789', 'Association de défense des droits des chiens et chats', 'actif', 'images/users/Thomaspaul-asso.webp', 9),
-('W456789012', 'Emma Robert', '50 Boulevard des Oiseaux', '67000', 'Strasbourg', '0834567890', 'Refuge pour animaux domestiques blessés', 'actif', 'images/users/Robertemma-asso.webp', 10),
-('W567890123', 'Lucie Morin', '60 Rue des Chevaux', '59000', 'Lille', '0945678901', 'Sauvetage des chiens et chats en détresse', 'actif', 'images/users/Morinlucie-asso.webp', 16),
-('W678901234', 'Maxime Collet', '70 Avenue des Rongeurs', '33000', 'Bordeaux', '0756789012', 'Refuge pour petits chiens et chats maltraités', 'actif', 'images/users/Colletmaxime-asso.webp', 19),
-('W789012345', 'Louis Pichon', '80 Rue de la Protection', '06000', 'Nice', '0867890123', 'Protection des animaux domestiques', 'actif', 'images/users/Pichonlouis-asso.webp', 21),
-('W890123456', 'Raphaël Garnier', '90 Boulevard des Exotiques', '35000', 'Rennes', '0978901234', 'Refuge pour animaux en danger', 'actif', 'images/users/Garnierraphael-asso.webp', 23),
-('W901234567', 'Cécile Aubert', '100 Avenue de la Faune', '34000', 'Montpellier', '0856789012', 'Sauvegarde des animaux domestiques', 'actif', 'images/users/Aubertcecile-asso.webp', 20);
+('W123456789', 'Les Gardiens à Pattes', '67 rue Boileau', '69006', 'Lyon', '0654321987', 'Association de protection des chiens et chats', 'actif', 'images/users/Duboispierre-asso.webp', 6),
+('W987654321', ' Coeurs Sauvages', '31 Mnt Commandant de Robien', '13011', 'Marseille', '0798765432', 'Refuge pour chiens et chats en détresse', 'actif', 'images/users/Lefebvremarie-asso.webp', 7),
+('W234567890', 'Espoir Animal', '6 Impasse Marie Laurencin', '31200', 'Toulouse', '0612345678', 'Refuge pour animaux abandonnés et maltraités', 'actif', 'images/users/Bernardalice-asso.webp', 8),
+('W345678901', 'Pattes en Détresse', '41 boulevard Pasteur', '44100', 'Nantes', '0723456789', 'Association de défense des droits des chiens et chats', 'actif', 'images/users/Thomaspaul-asso.webp', 9),
+('W456789012', 'Eden des Animaux', '1 rue des Zouaves', '67000', 'Strasbourg', '0834567890', 'Refuge pour animaux domestiques blessés', 'actif', 'images/users/Robertemma-asso.webp', 10),
+('W567890123', 'Compagnons pour la Vie', '27 rue Jean Bart', '59000', 'Lille', '0945678901', 'Sauvetage des chiens et chats en détresse', 'actif', 'images/users/Morinlucie-asso.webp', 16),
+('W678901234', 'La Voix des Sans-Voix', '24 rue Laseppe', '33000', 'Bordeaux', '0756789012', 'Refuge pour petits chiens et chats maltraités', 'actif', 'images/users/Colletmaxime-asso.webp', 19),
+('W789012345', 'Havre de Paix Animale', '38 rue du Maréchal Joffre', '06000', 'Nice', '0867890123', 'Protection des animaux domestiques', 'actif', 'images/users/Pichonlouis-asso.webp', 21),
+('W890123456', 'Oasis des Animaux', '5 rue ROland Doré', '35000', 'Rennes', '0978901234', 'Refuge pour animaux en danger', 'actif', 'images/users/Garnierraphael-asso.webp', 23),
+('W901234567', 'La Meute Solidaire', '2 rue des LAvandes', '34790', 'Grabels', '0856789012', 'Sauvegarde des animaux domestiques', 'actif', 'images/users/Aubertcecile-asso.webp', 20);
 
 
 -- Insertion dans la table animal
