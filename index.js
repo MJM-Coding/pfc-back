@@ -5,6 +5,7 @@ import { fileURLToPath } from "url"; // Utilisé pour manipuler les URL et obten
 import cors from "cors";
 import mainRouter from "./src/routers/mainRouter.js"; // Importation du routeur principal de l'application
 
+
 // ! Configuration des chemins d'accès aux fichiers
 //Cette configuration (__filename et __dirname) est nécessaire en utilisant les modules ESM,
 //__filename et __dirname ne sont pas définis par défaut sur module ESM (import) comme dans CommonJS (export).

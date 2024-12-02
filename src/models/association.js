@@ -56,7 +56,7 @@ Association.init(
       defaultValue: "en attente",
     },
     profile_photo: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
   },
   {

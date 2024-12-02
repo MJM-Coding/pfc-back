@@ -11,7 +11,7 @@ import { router as askRouter } from "./askRouter.js"; // router secondaire pour 
 import { router as associationRouter } from "./associationRouter.js"; // router secondaire pour les routes liées aux associations
 import { router as familyRouter } from "./familyRouter.js"; // router secondaire pour les routes liées aux familles d'accueil
 import { router as userRouter } from "./userRouter.js"; // router secondaire pour les routes liées aux utilisateurs
-
+import uploadRouter  from "./uploadRouter.js";
 
 import { validate } from "../validation/validate.js"; // Importation de la fonction de validation
 import { createSchema } from "../validation/allUser.js"; // Importation du schéma d'inscription JOI
@@ -35,6 +35,9 @@ router.post("/signin", withTryCatch(signinController.signinUser)); // Connexion
 
 //! Route de raffraichissement du token
 router.post("/refresh-token", withTryCatch(signinController.refreshToken));
+
+//! Route pour l'upload d'une image
+router.use("/upload-image", uploadRouter)
 
 
 // *Middleware pour gérer les routes non trouvées

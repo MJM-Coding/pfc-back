@@ -47,7 +47,7 @@ Family.init(
       type: DataTypes.TEXT,
     },
     profile_photo: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
   },
   {
