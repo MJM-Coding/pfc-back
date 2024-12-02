@@ -85,7 +85,7 @@ INSERT INTO animal (name, species, breed, gender, age, size, description, profil
 ('Chester', 'Chat', 'British Shorthair', 'M', 3, 'Moyen', 'Chat tranquille et amical', 'images/animals_profile/21.webp', 'images/animals_photo1/21.webp', 'images/animals_photo2/21.webp', 'images/animals_photo3/21.webp', 3),
 ('Sophie', 'Chat', 'Ragdoll', 'F', 4, 'Grand', 'Chat doux et affectueux', 'images/animals_profile/22.webp', 'images/animals_photo1/22.webp', 'images/animals_photo2/22.webp', 'images/animals_photo3/22.webp', 3),
 ('Nala', 'Chat', 'Sphynx', 'F', 2, 'Petit', 'Chat curieux et plein de vie', 'images/animals_profile/23.webp', 'images/animals_photo1/23.webp', 'images/animals_photo2/23.webp', 'images/animals_photo3/23.webp', 3),
-('Tigger', 'Chat', 'Tigré', 'M', 3, 'Moyen', 'Chat joueur et espiègle', 'images/animals_profile/24.webp', 'images/animals_photo1/24.webp', 'images/animals_photo2/24.webp', 'images/animals_photo3/24.webp', 3),
+('Tigger', 'Chat', 'Tigré', 'M', 3, 'Moyen', 'Chat joueur et espiègle', 'images/animals_profile/24.webp', 'images/animals_photo1/24.webp', '', '', 3),
 ('Milo', 'Chat', 'Siamois', 'M', 1, 'Petit', 'Chat affectueux et joueur', 'images/animals_profile/25.webp', 'images/animals_photo1/25.webp', 'images/animals_photo2/25.webp', 'images/animals_photo3/25.webp', 3),
 ('Leo', 'Chien', 'Rottweiler', 'M', 6, 'Grand', 'Chien loyal et protecteur', 'images/animals_profile/26.webp', 'images/animals_photo1/26.webp', 'images/animals_photo2/26.webp', 'images/animals_photo3/26.webp', 9),
 ('Coco', 'Chien', 'Cocker anglais', 'F', 5, 'Moyen', 'Chienne amicale et douce', 'images/animals_profile/27.webp', 'images/animals_photo1/27.webp', 'images/animals_photo2/27.webp', 'images/animals_photo3/27.webp', 3),

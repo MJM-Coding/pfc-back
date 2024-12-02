@@ -1,4 +1,4 @@
-import { Animal, Association, Family } from "../models/index.js";
+import { Animal, Association } from "../models/index.js";
 import HttpError from "../middlewares/httperror.js";
 import { Op } from "sequelize";
 import cloudinary from "../config/cloudinaryConfig.js"; // Importez votre configuration Cloudinary
@@ -6,25 +6,19 @@ import validator from "validator";
 
 const { isURL } = validator;
 
+
 export const animalController = {
   //! Recuperer tous les animaux
   getAllAnimals: async (req, res) => {
+    
     if (req.user) {
-      const association = await Association.findOne({
-        where: { id_user: req.user.id },
-      });
+      const association = await Association.findOne({where: {id_user : req.user.id}});
       if (association) {
         const myAnimals = await association.getAnimals();
         return res.json(myAnimals);
       }
-
-      const family = await Family.findOne({ where: { id_user: req.user.id } });
-      if (family) {
-        const myAnimals = await family.getAnimalsFamily();
-        return res.json(myAnimals);
-      }
     }
-
+    
     const { species, breed, age, size, gender } = req.query;
     const conditions = { id_family: null };
 
@@ -70,12 +64,8 @@ export const animalController = {
     const animalId = req.params.id || req.params.animalId;
 
     if (req.user) {
-      const association = await Association.findOne({
-        where: { id_user: req.user.id },
-      });
-      const myAnimal = await association.getAnimals({
-        where: { id: animalId },
-      });
+      const association = await Association.findOne({where: {id_user : req.user.id}});
+      const myAnimal = await association.getAnimals({where: {id: animalId}});
       return res.json(myAnimal);
     }
 
@@ -117,23 +107,36 @@ export const animalController = {
 
     const animalData = req.body;
 
-    // Gestion des photos si fournies
-    if (Array.isArray(animalData.images)) {
-      const uploads = animalData.images.map((image) =>
-        cloudinary.v2.uploader.upload(image)
-      );
+    //! Gestion des images
+    const imageUrls = {};
 
-      const urls = await Promise.all(uploads);
-
-      for (let i = 0; i < urls.length; i++) {
-        const url = urls[i].secure_url;
-        if (i === 0) {
-          animalData.profile_photo = url;
-        } else {
-          animalData[`photo${i}`] = url;
+    //* Upload de la photo de profil si fournie
+    if (animalData.profile_photo && isURL(animalData.profile_photo)) {
+      const uploadResultProfilePhoto = await cloudinary.v2.uploader.upload(
+        animalData.profile_photo,
+        {
+          resource_type: "image",
         }
+      );
+      imageUrls.profile_photo = uploadResultProfilePhoto.secure_url;
+    }
+
+    //* Upload des autres photos si fournies
+    for (let i = 1; i <= 3; i++) {
+      const photoKey = `photo${i}`;
+      if (animalData[photoKey] && isURL(animalData[photoKey])) {
+        const uploadResultPhoto = await cloudinary.v2.uploader.upload(
+          animalData[photoKey],
+          {
+            resource_type: "image",
+          }
+        );
+        imageUrls[photoKey] = uploadResultPhoto.secure_url;
       }
     }
+
+    //* Ajout des URL d'images aux données de l'animal
+    Object.assign(animalData, imageUrls);
 
     // Associer l'animal à l'association
     animalData.id_association = association.id;
@@ -224,5 +227,29 @@ export const animalController = {
     await selectedAnimal.save(); // Sauvegarde l'animal mis à jour
 
     res.status(200).json(selectedAnimal);
+  },
+
+  //! Supprimer un animal
+  deleteAnimal: async (req, res) => {
+    const association = await Association.findOne({
+      where: { id_user: req.user.id },
+    });
+
+    const animalId = req.params.id;
+    const selectedAnimal = await Animal.findByPk(animalId);
+
+    if (!selectedAnimal) {
+      throw new HttpError(
+        404,
+        "Animal non trouvé. Veuillez vérifier l'animal demandé"
+      );
+    }
+
+    if (association.id !== selectedAnimal.id_association) {
+      throw new HttpError(403, "Accès interdit : Vous n'êtes pas habilité");
+    }
+
+    await selectedAnimal.destroy();
+    res.status(204).end();
   },
 };
