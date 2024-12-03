@@ -8,10 +8,12 @@ export const patchSchema = Joi.object({
     .try(
       Joi.string()
         .length(5)
-        .pattern(/^\d{5}$/, "code postal"),
-      Joi.number().integer().min(10000).max(99999) // Si envoyé comme nombre
-    )
-    .required(),
+        .pattern(/^\d{5}$/, "code postal")
+        .optional()
+        .allow(null), // Permettre que postal_code soit absent ou null
+      Joi.number().integer().min(10000).max(99999).optional().allow(null) // Même chose pour un nombre
+    ),
+    
   number_of_children: Joi.number().integer().optional().allow(null),
   number_of_animals: Joi.number().integer().optional().allow(null),
   garden: Joi.boolean().optional().allow(null),
