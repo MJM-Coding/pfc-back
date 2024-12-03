@@ -27,6 +27,9 @@ familyRouter.patch(
     withTryCatch(familyController.patchFamily)
   );
   
+// Route pour supprimer la photo de profil
+familyRouter.patch("/:id/delete-photo", withTryCatch(familyController.deleteProfilePhoto));
+
 familyRouter.delete("/:id",/*  isRoleAuthorizedMiddleware(["family"]), verifyFamily(),  */withTryCatch(familyController.deleteFamily));
 
 familyRouter.get("/:id/animal", /* isRoleAuthorizedMiddleware(["family"]), verifyFamily(), */ withTryCatch(animalController.getAllAnimals))

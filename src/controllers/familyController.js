@@ -38,6 +38,43 @@ export const familyController = {
     res.status(200).json(family);
   },
 
+//! Méthode pour supprimer la photo de profil
+deleteProfilePhoto: async (req, res) => {
+  const { id } = req.params; // Récupération de l'ID depuis req.params
+
+  try {
+    // Vérifier si la famille existe
+    const family = await Family.findByPk(id);
+
+    if (!family) {
+      return res.status(404).json({ message: "Famille non trouvée." });
+    }
+
+    // Supprimer l'image de Cloudinary si elle existe
+    if (family.profile_photo) {
+      try {
+        const publicId = family.profile_photo.split('/').pop().split('.')[0]; // Extraire le public ID
+        await cloudinary.v2.uploader.destroy(publicId);
+        console.log(`Image Cloudinary supprimée : ${publicId}`);
+      } catch (err) {
+        console.error("Erreur lors de la suppression sur Cloudinary :", err.message);
+        return res.status(500).json({ message: "Erreur lors de la suppression sur Cloudinary." });
+      }
+    }
+
+    // Mettre à jour le champ `profile_photo` à null
+    await family.update({ profile_photo: null });
+
+    return res.status(200).json({ message: "Photo supprimée avec succès." });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la photo :", error);
+    return res.status(500).json({ message: "Impossible de supprimer la photo." });
+  }
+},
+
+
+
+
   //! Methode pour modifier une famille
   patchFamily: async (req, res, next) => {
     const familyId = req.params.id;
