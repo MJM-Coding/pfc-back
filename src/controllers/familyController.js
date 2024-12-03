@@ -38,142 +38,179 @@ export const familyController = {
     res.status(200).json(family);
   },
 
-  //! Méthode pour mettre à jour les informations de la famille
+  //! Methode pour modifier une famille
   patchFamily: async (req, res, next) => {
     const familyId = req.params.id;
-    const { 
-      firstname, 
-      lastname, 
-      email, 
-      address, 
-      city, 
-      postal_code, 
-      phone, 
-      description, 
-      garden, 
-      number_of_animals, 
-      number_of_children 
+    const {
+      firstname,
+      lastname,
+      email,
+      address,
+      city,
+      postal_code,
+      phone,
+      description,
+      garden,
+      number_of_animals,
+      number_of_children,
     } = req.body;
-    
+  
     console.log("Données reçues du formulaire : ", req.body);
-   
+  
     const family = await Family.findByPk(familyId, {
       attributes: { exclude: "password" },
-      include: "user",
+      include: [{ association: "user" }], // Inclut l'utilisateur associé
     });
-   
+  
     if (!family) {
-      console.log('Famille d\'accueil non trouvée');
+      console.log("Famille d'accueil non trouvée");
       return next(new HttpError(404, "Famille d'accueil non trouvée"));
     }
-   
+  
     const transaction = await sequelize.transaction();
-    console.log('Transaction commencée');
-   
+    console.log("Transaction commencée");
+  
     try {
       const user = await family.getUser();
-      console.log('Utilisateur trouvé :', user);
-   
+      console.log("Utilisateur trouvé :", user);
+  
       // Mise à jour des informations utilisateur
       const userData = {
-        ...user.get(),
         firstname: firstname || user.firstname,
         lastname: lastname || user.lastname,
         email: email || user.email,
-        id: user.id,
       };
-      console.log('Données utilisateur mises à jour :', userData);
-   
+  
       // Gestion du changement de mot de passe
-      if (req.body.currentPassword && req.body.newPassword && req.body.confirmPassword) {
-        const isCurrentPasswordValid = await Scrypt.compare(req.body.currentPassword, user.password);
+      if (
+        req.body.currentPassword &&
+        req.body.newPassword &&
+        req.body.confirmPassword
+      ) {
+        const isCurrentPasswordValid = await Scrypt.compare(
+          req.body.currentPassword,
+          user.password
+        );
         if (!isCurrentPasswordValid) {
           await transaction.rollback();
-          return res.status(400).json({ message: "Le mot de passe actuel est incorrect." });
+          return res
+            .status(400)
+            .json({ message: "Le mot de passe actuel est incorrect." });
         }
-   
+  
         if (req.body.newPassword !== req.body.confirmPassword) {
           await transaction.rollback();
-          return res.status(400).json({ message: "Le nouveau mot de passe et sa confirmation ne correspondent pas." });
+          return res.status(400).json({
+            message:
+              "Le nouveau mot de passe et sa confirmation ne correspondent pas.",
+          });
         }
-   
+  
         if (!validatePassword(req.body.newPassword)) {
           await transaction.rollback();
           return res.status(400).json({
-            message: "Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.",
+            message:
+              "Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.",
           });
         }
-   
-        userData.password = Scrypt.hash(req.body.newPassword);
+  
+        userData.password = await Scrypt.hash(req.body.newPassword);
       }
-   
+  
       // Mise à jour de l'utilisateur
       await user.update(userData, { transaction });
-      console.log('Utilisateur mis à jour dans la base de données');
-   
+      console.log("Utilisateur mis à jour dans la base de données");
+  
       //! Gestion de l'image de profil avec Multer et Cloudinary
       if (req.file) {
         if (family.profile_photo) {
           if (family.profile_photo.startsWith("images/")) {
-            const localFilePath = path.join(process.cwd(), "public", family.profile_photo);
+            const localFilePath = path.join(
+              process.cwd(),
+              "public",
+              family.profile_photo
+            );
             try {
               await fs.unlink(localFilePath);
               console.log(`Fichier local supprimé : ${localFilePath}`);
             } catch (err) {
-              console.warn(`Erreur lors de la suppression du fichier local : ${err.message}`);
+              console.warn(
+                `Erreur lors de la suppression du fichier local : ${err.message}`
+              );
             }
           } else {
-            const publicId = family.profile_photo.split("/").pop().split(".")[0];
+            const publicId = family.profile_photo
+              .split("/")
+              .pop()
+              .split(".")[0];
             try {
               await cloudinary.v2.uploader.destroy(publicId);
               console.log(`Image Cloudinary supprimée : ${publicId}`);
             } catch (err) {
-              console.warn(`Erreur lors de la suppression sur Cloudinary : ${err.message}`);
+              console.warn(
+                `Erreur lors de la suppression sur Cloudinary : ${err.message}`
+              );
             }
           }
         }
-   
+  
         // Upload de la nouvelle photo sur Cloudinary
         const uploadResult = await uploadToCloudinary(req.file);
-   
+  
         // Mettre à jour le champ `profile_photo` et sauvegarder
         family.profile_photo = uploadResult;
         await family.save({ transaction });
-        console.log(`Photo de profil mise à jour dans la BDD : ${uploadResult}`);
+        console.log(
+          `Photo de profil mise à jour dans la BDD : ${uploadResult}`
+        );
       }
-   
-      // Mettre à jour les autres champs de la famille
+  
+      // Mise à jour des autres champs de la famille
       family.address = address || family.address;
       family.city = city || family.city;
       family.postal_code = postal_code || family.postal_code;
       family.phone = phone || family.phone;
       family.description = description || family.description;
       family.garden = garden || family.garden;
-      family.number_of_animals = number_of_animals || family.number_of_animals;
-      family.number_of_children = number_of_children || family.number_of_children;
-   
+      family.number_of_animals =
+        number_of_animals || family.number_of_animals;
+      family.number_of_children =
+        number_of_children || family.number_of_children;
+  
       await family.save({ transaction });
-   
-      console.log('Données de la famille mises à jour');
-   
-      // Recharger la famille pour inclure les associations à jour
-      const updatedFamily = await Family.findByPk(familyId, {
+      console.log("Données de la famille mises à jour");
+  
+      // **Recharger l'utilisateur pour inclure les mises à jour**
+      const updatedUser = await user.reload({ transaction });
+      console.log("Utilisateur rechargé avec les mises à jour:", updatedUser);
+  
+      // **Recharger la famille pour inclure les relations mises à jour**
+      await family.reload({
         include: [
-          { association: "user" },
-          { association: "animalsFamily" },
+          { association: "user" }, // Inclut les mises à jour de l'utilisateur
         ],
       });
-   
+      console.log(
+        "Famille rechargée avec les relations mises à jour:",
+        family
+      );
+  
+      // Commit de la transaction
       await transaction.commit();
-      console.log('Transaction commitée avec succès');
-   
-      res.status(201).json(updatedFamily);
+      console.log("Transaction commitée avec succès");
+  
+      // **Associer l'utilisateur rechargé manuellement à la famille**
+      family.user = updatedUser;
+  
+      // Retourne les données mises à jour
+      res.status(201).json(family);
     } catch (error) {
       await transaction.rollback();
-      console.error('Erreur lors de la mise à jour de la famille :', error);
+      console.error("Erreur lors de la mise à jour de la famille :", error);
       throw new HttpError(500, "Error while updating user");
     }
-   },
+  },
+  
 
   //! Supprimer une famille
   deleteFamily: async (req, res) => {
