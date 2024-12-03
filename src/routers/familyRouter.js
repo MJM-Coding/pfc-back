@@ -23,7 +23,7 @@ familyRouter.get("/:id", /* isRoleAuthorizedMiddleware(["admin", "association", 
 familyRouter.patch(
     "/:id",
     upload.single("profile_photo"), // Gère l'upload d'une seule image
-    /* validate(patchSchema, "body"), */
+    validate(patchSchema, "body"),
     withTryCatch(familyController.patchFamily)
   );
   
