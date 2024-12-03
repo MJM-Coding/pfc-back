@@ -4,7 +4,7 @@ import path from "path"; // Module pour travailler avec les chemins de fichiers 
 import { fileURLToPath } from "url"; // Utilisé pour manipuler les URL et obtenir des chemins de fichiers
 import cors from "cors";
 import mainRouter from "./src/routers/mainRouter.js"; // Importation du routeur principal de l'application
-
+import multer from "multer";
 
 // ! Configuration des chemins d'accès aux fichiers
 //Cette configuration (__filename et __dirname) est nécessaire en utilisant les modules ESM,

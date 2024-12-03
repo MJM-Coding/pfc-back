@@ -1,71 +1,46 @@
+import fs from "fs/promises";
+import path from "path";
 import { Animal, Association } from "../models/index.js";
 import HttpError from "../middlewares/httperror.js";
 import { Op } from "sequelize";
-import cloudinary from "../config/cloudinaryConfig.js"; // Importez votre configuration Cloudinary
-import validator from "validator";
-
-const { isURL } = validator;
-
+import cloudinary from "../config/cloudinaryConfig.js";
 
 export const animalController = {
-  //! Recuperer tous les animaux
+  //! Récupérer tous les animaux
   getAllAnimals: async (req, res) => {
-    
     if (req.user) {
-      const association = await Association.findOne({where: {id_user : req.user.id}});
+      const association = await Association.findOne({ where: { id_user: req.user.id } });
       if (association) {
         const myAnimals = await association.getAnimals();
         return res.json(myAnimals);
       }
     }
-    
+
     const { species, breed, age, size, gender } = req.query;
     const conditions = { id_family: null };
 
-    // Filtre les animaux par éspèce spécifiée, Op.iLike  =  insensible à la casse dans Sequelize.
-    if (species) {
-      conditions.species = { [Op.iLike]: species };
-    }
+    if (species) conditions.species = { [Op.iLike]: species };
+    if (breed) conditions.breed = { [Op.iLike]: breed };
+    if (age) conditions.age = { [Op.lt]: parseInt(age, 10) };
+    if (size) conditions.size = { [Op.iLike]: size };
+    if (gender) conditions.gender = { [Op.iLike]: gender };
 
-    if (breed) {
-      conditions.breed = { [Op.iLike]: breed };
-    }
-
-    // Filtre les animaux dont l'âge est inférieur à la valeur spécifiée, Op.lt = "inférieur à" dans Sequelize
-    if (age) {
-      conditions.age = { [Op.lt]: parseInt(age, 10) };
-    }
-
-    // Filtre les animaux par taille
-    if (size) {
-      conditions.size = { [Op.iLike]: size };
-    }
-
-    // Filtre les animaux par sexe, Op.iLike = insensible à la casse dans Sequelize
-    if (gender) {
-      conditions.gender = { [Op.iLike]: gender };
-    }
-
-    // Effectue la requête avec les conditions
-    const animals = await Animal.findAll({
-      where: conditions,
-    });
+    const animals = await Animal.findAll({ where: conditions });
 
     if (animals.length === 0) {
-      return res.status(404).json({ message: "Aucun animal trouvé" });
+      throw new HttpError(404, "Aucun animal trouvé");
     }
 
-    // Renvoyer les animaux filtrés
     res.status(200).json(animals);
   },
 
-  //! Récuperer un animal
+  //! Récupérer un animal
   getAnimalById: async (req, res) => {
     const animalId = req.params.id || req.params.animalId;
 
     if (req.user) {
-      const association = await Association.findOne({where: {id_user : req.user.id}});
-      const myAnimal = await association.getAnimals({where: {id: animalId}});
+      const association = await Association.findOne({ where: { id_user: req.user.id } });
+      const myAnimal = await association.getAnimals({ where: { id: animalId } });
       return res.json(myAnimal);
     }
 
@@ -74,176 +49,140 @@ export const animalController = {
       include: [
         {
           association: "family",
-          include: {
-            association: "user",
-            attributes: { exclude: ["password"] },
-          },
-        }, // Relation avec la famille
+          include: { association: "user", attributes: { exclude: ["password"] } },
+        },
         {
           association: "association",
-          include: {
-            association: "user",
-            attributes: { exclude: ["password"] },
-          },
-        }, // Relation avec l'association
+          include: { association: "user", attributes: { exclude: ["password"] } },
+        },
       ],
     });
 
-    if (!animal) {
-      throw new HttpError(
-        404,
-        "Animal non trouvé. Veuillez vérifier l'animal demandé"
-      );
-    }
+    if (!animal) throw new HttpError(404, "Animal non trouvé");
 
     res.status(200).json(animal);
   },
 
-  //! Ajouter un animal
+  //! Créer un animal
   createAnimal: async (req, res) => {
-    const association = await Association.findOne({
-      where: { id_user: req.user.id },
-    });
+    const association = await Association.findOne({ where: { id_user: req.user.id } });
 
-    const animalData = req.body;
+    if (!association) throw new HttpError(403, "Accès interdit : Vous n'êtes pas habilité");
 
-    //! Gestion des images
-    const imageUrls = {};
+    const { name, species, breed, gender, age, size, description } = req.body;
 
-    //* Upload de la photo de profil si fournie
-    if (animalData.profile_photo && isURL(animalData.profile_photo)) {
-      const uploadResultProfilePhoto = await cloudinary.v2.uploader.upload(
-        animalData.profile_photo,
-        {
-          resource_type: "image",
-        }
-      );
-      imageUrls.profile_photo = uploadResultProfilePhoto.secure_url;
+    if (!name || !species || !gender || !age || !size) {
+      throw new HttpError(400, "Les champs obligatoires sont manquants");
     }
 
-    //* Upload des autres photos si fournies
-    for (let i = 1; i <= 3; i++) {
-      const photoKey = `photo${i}`;
-      if (animalData[photoKey] && isURL(animalData[photoKey])) {
-        const uploadResultPhoto = await cloudinary.v2.uploader.upload(
-          animalData[photoKey],
-          {
-            resource_type: "image",
-          }
-        );
-        imageUrls[photoKey] = uploadResultPhoto.secure_url;
+    const photoFields = ["profile_photo", "photo1", "photo2", "photo3"];
+    const photos = {};
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        if (i >= photoFields.length) break;
+        photos[photoFields[i]] = await uploadToCloudinary(req.files[i]);
       }
     }
 
-    //* Ajout des URL d'images aux données de l'animal
-    Object.assign(animalData, imageUrls);
+    const newAnimal = await Animal.create({
+      name,
+      species,
+      breed,
+      gender,
+      age,
+      size,
+      description,
+      id_association: association.id,
+      ...photos,
+    });
 
-    // Associer l'animal à l'association
-    animalData.id_association = association.id;
-
-    // Créer un nouvel animal avec les données fournies dans la requête
-    const newAnimal = await Animal.create(animalData);
-
-    res.status(201).json(newAnimal); // Renvoie la réponse avec le nouvel animal créé
+    res.status(201).json({ message: "Animal créé avec succès", animal: newAnimal });
   },
 
-  //! Modifier un animal
-  patchAnimal: async (req, res) => {
-    const association = await Association.findOne({
-      where: { id_user: req.user.id },
-    });
-    const animalId = req.params.id;
-    const selectedAnimal = await Animal.findByPk(animalId);
+//! Modifier un animal
+patchAnimal: async (req, res) => {
+  const association = await Association.findOne({ where: { id_user: req.user.id } });
+  const animalId = req.params.id;
+  const selectedAnimal = await Animal.findByPk(animalId);
 
-    if (!selectedAnimal) {
-      throw new HttpError(
-        404,
-        "Animal non trouvé. Veuillez vérifier l'animal demandé"
-      );
-    }
+  if (!selectedAnimal) throw new HttpError(404, "Animal non trouvé");
 
-    if (association.id !== selectedAnimal.id_association) {
-      throw new HttpError(403, "Accès interdit: Vous n'etes pas habilité");
-    }
+  if (association.id !== selectedAnimal.id_association) {
+    throw new HttpError(403, "Accès interdit : Vous n'êtes pas habilité");
+  }
 
-    Object.assign(selectedAnimal, req.body); // Met à jour les propriétés de l'animal
+  //! Gestion des photos
+  if (req.files && req.files.length > 0) {
+    const photoFields = ["profile_photo", "photo1", "photo2", "photo3"];
+    for (let i = 0; i < req.files.length; i++) {
+      if (i >= photoFields.length) break;
 
-    await selectedAnimal.save(); // Sauvegarde l'animal mis à jour
-
-    res.status(200).json(selectedAnimal);
-  },
-
-  //! Supprimer un animal
-  deleteAnimal: async (req, res) => {
-    const association = await Association.findOne({
-      where: { id_user: req.user.id },
-    });
-    const animalId = req.params.id;
-
-    const selectedAnimal = await Animal.findByPk(animalId);
-
-    if (!selectedAnimal) {
-      throw new HttpError(
-        404,
-        "Animal non trouvé. Veuillez vérifier l'animal demandé"
-      );
-    }
-
-    if (association.id !== selectedAnimal.id_association) {
-      throw new HttpError(403, "Accès interdit : Vous n'êtes pas habilité");
-    }
-
-    //! Gestion des images pour mise à jour
-    const imageUrls = {};
-
-    //* Upload de la photo de profil si fournie
-    if (req.body.profile_photo && isURL(req.body.profile_photo)) {
-      const uploadResultProfilePhoto = await cloudinary.v2.uploader.upload(
-        req.body.profile_photo,
-        {
-          resource_type: "image",
-        }
-      );
-      imageUrls.profile_photo = uploadResultProfilePhoto.secure_url;
-    }
-
-    //* Upload des autres photos si fournies
-    for (let i = 1; i <= 3; i++) {
-      const photoKey = `photo${i}`;
-      if (req.body[photoKey] && isURL(req.body[photoKey])) {
-        const uploadResultPhoto = await cloudinary.v2.uploader.upload(
-          req.body[photoKey],
-          {
-            resource_type: "image",
+      const currentPhoto = selectedAnimal[photoFields[i]];
+      if (currentPhoto) {
+        if (currentPhoto.startsWith("images/")) {
+          // Supprimer le fichier local
+          const localFilePath = path.join(process.cwd(), "public", currentPhoto);
+          try {
+            await fs.unlink(localFilePath);
+            console.log(`Fichier local supprimé : ${localFilePath}`);
+          } catch (err) {
+            console.warn(`Erreur lors de la suppression du fichier local : ${err.message}`);
           }
-        );
-        imageUrls[photoKey] = uploadResultPhoto.secure_url;
+        } else {
+          // Supprimer l'image sur Cloudinary
+          const publicId = currentPhoto.split("/").pop().split(".")[0];
+          try {
+            await cloudinary.v2.uploader.destroy(publicId);
+            console.log(`Image Cloudinary supprimée : ${publicId}`);
+          } catch (err) {
+            console.warn(`Erreur lors de la suppression sur Cloudinary : ${err.message}`);
+          }
+        }
       }
+
+      // Upload de la nouvelle photo sur Cloudinary
+      const uploadResult = await uploadToCloudinary(req.files[i]);
+
+      // Mettre à jour le champ correspondant dans l'animal
+      selectedAnimal[photoFields[i]] = uploadResult;
     }
+  }
 
-    //* Met à jour les propriétés de l'animal avec les nouvelles URLs d'images
-    Object.assign(selectedAnimal, req.body, imageUrls);
+  // Mettre à jour les autres champs
+  const updates = req.body;
+  await selectedAnimal.update({
+    ...updates,
+    profile_photo: selectedAnimal.profile_photo, // S'assurer que les photos sont mises à jour
+    photo1: selectedAnimal.photo1,
+    photo2: selectedAnimal.photo2,
+    photo3: selectedAnimal.photo3,
+  });
 
-    await selectedAnimal.save(); // Sauvegarde l'animal mis à jour
+  // Recharger l'animal pour inclure les associations à jour
+  const updatedAnimal = await Animal.findByPk(animalId, {
+    include: [
+      {
+        association: "family",
+        include: { association: "user", attributes: { exclude: ["password"] } },
+      },
+      {
+        association: "association",
+        include: { association: "user", attributes: { exclude: ["password"] } },
+      },
+    ],
+  });
 
-    res.status(200).json(selectedAnimal);
-  },
+  res.status(200).json(updatedAnimal);
+},
+
 
   //! Supprimer un animal
   deleteAnimal: async (req, res) => {
-    const association = await Association.findOne({
-      where: { id_user: req.user.id },
-    });
-
+    const association = await Association.findOne({ where: { id_user: req.user.id } });
     const animalId = req.params.id;
     const selectedAnimal = await Animal.findByPk(animalId);
 
-    if (!selectedAnimal) {
-      throw new HttpError(
-        404,
-        "Animal non trouvé. Veuillez vérifier l'animal demandé"
-      );
-    }
+    if (!selectedAnimal) throw new HttpError(404, "Animal non trouvé");
 
     if (association.id !== selectedAnimal.id_association) {
       throw new HttpError(403, "Accès interdit : Vous n'êtes pas habilité");
@@ -252,4 +191,21 @@ export const animalController = {
     await selectedAnimal.destroy();
     res.status(204).end();
   },
+};
+
+//! Fonction utilitaire pour uploader une image sur Cloudinary
+const uploadToCloudinary = (file) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.v2.uploader.upload_stream(
+      { resource_type: "image", public_id: `animal_${Date.now()}` },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    );
+    uploadStream.end(file.buffer);
+  });
 };
