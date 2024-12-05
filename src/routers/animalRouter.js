@@ -26,7 +26,7 @@ animalRouter.post(
 
 animalRouter.patch(
   "/:id",
-  upload.array("image", 4), // Gère l'upload d'images pour mise à jour
+  upload.fields([{ name: "profile_photo", maxCount: 1 }, { name: "photos", maxCount: 3 }]),
   verifyToken,
   isRoleAuthorizedMiddleware(["association"]),
   withTryCatch(animalController.patchAnimal)
@@ -41,6 +41,6 @@ animalRouter.delete(
 
 animalRouter.patch(
   "/:id/delete-photo/:photoType",
-  /* verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(), */
+  verifyToken, isRoleAuthorizedMiddleware(["association"]), /* verifyAssociation(), */
   withTryCatch(animalController.deleteAnimalPhoto)
 );

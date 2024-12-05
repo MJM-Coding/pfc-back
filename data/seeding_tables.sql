@@ -56,7 +56,7 @@ INSERT INTO association (rna_number, representative, address, postal_code, city,
 ('W567890123', 'Compagnons pour la Vie', '27 rue Jean Bart', '59000', 'Lille', '0945678901', 'Sauvetage des chiens et chats en détresse', 'actif', 'images/users/Morinlucie-asso.webp', 16),
 ('W678901234', 'La Voix des Sans-Voix', '24 rue Laseppe', '33000', 'Bordeaux', '0756789012', 'Refuge pour petits chiens et chats maltraités', 'actif', 'images/users/Colletmaxime-asso.webp', 19),
 ('W789012345', 'Havre de Paix Animale', '38 rue du Maréchal Joffre', '06000', 'Nice', '0867890123', 'Protection des animaux domestiques', 'actif', 'images/users/Pichonlouis-asso.webp', 21),
-('W890123456', 'Oasis des Animaux', '5 rue ROland Doré', '35000', 'Rennes', '0978901234', 'Refuge pour animaux en danger', 'actif', 'images/users/Garnierraphael-asso.webp', 23),
+('W890123456', 'Oasis des Animaux', '5 rue Roland Doré', '35000', 'Rennes', '0978901234', 'Refuge pour animaux en danger', 'actif', 'images/users/Garnierraphael-asso.webp', 23),
 ('W901234567', 'La Meute Solidaire', '2 rue des LAvandes', '34790', 'Grabels', '0856789012', 'Sauvegarde des animaux domestiques', 'actif', 'images/users/Aubertcecile-asso.webp', 20);
 
 
