@@ -22,10 +22,15 @@ export const patchSchema = Joi.object({
   ),
   description: Joi.string().allow('').optional().allow(null),
   status: Joi.string().default("en attente").optional().allow(null),
-  profile_photo: Joi.string().optional().allow(null),
+  profile_photo: Joi.string().optional().allow(null), // Si vous souhaitez conserver ce champ
   id_user: Joi.number().integer(),
   firstname: Joi.string(), // Déplacé à la racine
   lastname: Joi.string(),  // Déplacé à la racine
+  email: Joi.string().email(),
+  password: Joi.string(),
+    currentPassword: Joi.string().optional(), // Nouveau champ pour le mot de passe actuel
+    newPassword: Joi.string().optional(), // Nouveau champ pour le nouveau mot de passe
+    confirmPassword: Joi.string().optional(), // Nouveau champ pour la confirmation du mot de passe
   user: Joi.object({
     firstname: Joi.string(),
     lastname: Joi.string(),

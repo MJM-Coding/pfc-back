@@ -39,3 +39,8 @@ animalRouter.delete(
   withTryCatch(animalController.deleteAnimal)
 );
 
+animalRouter.patch(
+  "/:id/delete-photo/:photoType",
+  /* verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(), */
+  withTryCatch(animalController.deleteAnimalPhoto)
+);

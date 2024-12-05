@@ -10,7 +10,7 @@ export const patchSchema = Joi.object({
         .length(5)
         .pattern(/^\d{5}$/, "code postal")
         .optional()
-        .allow(null), // Permettre que postal_code soit absent ou null
+        .allow(null),
       Joi.number().integer().min(10000).max(99999).optional().allow(null) // Même chose pour un nombre
     ),
     

@@ -38,3 +38,7 @@ associationRouter.get("/:associationId/animal/:animalId",/* verifyToken, isRoleA
 associationRouter.get("/:associationId/ask",/* verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(),  */withTryCatch(askController.getAllAsks));
 associationRouter.get("/:associationId/ask/:askId",/* verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(),  */withTryCatch(askController.getAskById));
 associationRouter.patch("/:associationId/ask/:askId",/* verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(),  */withTryCatch(askController.patchAsk));
+
+
+// Route pour supprimer la photo de profil
+associationRouter.patch("/:id/delete-photo", withTryCatch(associationController.deleteProfilePhoto));

@@ -217,11 +217,11 @@ deleteProfilePhoto: async (req, res) => {
       await family.save({ transaction });
       console.log("Données de la famille mises à jour");
   
-      // **Recharger l'utilisateur pour inclure les mises à jour**
+      // Recharger l'utilisateur pour inclure les mises à jour
       const updatedUser = await user.reload({ transaction });
       console.log("Utilisateur rechargé avec les mises à jour:", updatedUser);
   
-      // **Recharger la famille pour inclure les relations mises à jour**
+      //Recharger la famille pour inclure les relations mises à jour
       await family.reload({
         include: [
           { association: "user" }, // Inclut les mises à jour de l'utilisateur
@@ -236,7 +236,7 @@ deleteProfilePhoto: async (req, res) => {
       await transaction.commit();
       console.log("Transaction commitée avec succès");
   
-      // **Associer l'utilisateur rechargé manuellement à la famille**
+      // Associer l'utilisateur rechargé manuellement à la famille**
       family.user = updatedUser;
   
       // Retourne les données mises à jour
@@ -244,7 +244,7 @@ deleteProfilePhoto: async (req, res) => {
     } catch (error) {
       await transaction.rollback();
       console.error("Erreur lors de la mise à jour de la famille :", error);
-      throw new HttpError(500, "Error while updating user");
+      throw new HttpError(500, "Erreur lors de la mise à jour de la famille ");
     }
   },
   
@@ -255,11 +255,11 @@ deleteProfilePhoto: async (req, res) => {
     const selectFamily = await Family.findByPk(familyId, { include: "animalsFamily" });
 
     if (!selectFamily) {
-      throw new HttpError(404, "Family not found");
+      throw new HttpError(404, "Famille non trouvée");
     }
 
     if (selectFamily.animalsFamily.length > 0) {
-      throw new HttpError(409, "Deletion impossible, you are still hosting animals");
+      throw new HttpError(409, "Suppression impossible, vous hébergez encore des animaux.");
     }
 
     const user = await selectFamily.getUser();
