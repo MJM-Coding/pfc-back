@@ -9,15 +9,19 @@ DROP TABLE IF EXISTS ask;
 
 -- Création de la table des utilisateurs
 CREATE TABLE "user" (
-  id          SERIAL PRIMARY KEY,
-  lastname    VARCHAR(50) NOT NULL,
-  firstname   VARCHAR(50) NOT NULL,
-  email       VARCHAR(100) NOT NULL,
-  password    VARCHAR(255) NOT NULL,
-  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  role        VARCHAR(50) CHECK (role IN ('family', 'association', 'admin')) 
+  id                  SERIAL PRIMARY KEY,
+  lastname            VARCHAR(50) NOT NULL,
+  firstname           VARCHAR(50) NOT NULL,
+  email               VARCHAR(100) NOT NULL UNIQUE,
+  password            VARCHAR(255) NOT NULL,
+  confirmationtoken   VARCHAR(255), -- Jeton de confirmation (nullable)
+  tokenexpiration     TIMESTAMP, -- Date d'expiration
+  isverified          BOOLEAN DEFAULT FALSE, -- Email vérifié (false par défaut)
+  created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  role                VARCHAR(50) CHECK (role IN ('family', 'association', 'admin')) NOT NULL
 );
+
 
 -- Création de la table des familles
 CREATE TABLE family (

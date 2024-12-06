@@ -36,6 +36,24 @@ User.init({
     role: {
         type: DataTypes.STRING,
     },
+    confirmationtoken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+         field: 'confirmationtoken'
+      },
+
+      tokenexpiration: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'tokenexpiration'
+      },
+
+    isverified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        field: 'isverified' 
+      },
 },
 {
     sequelize: sequelize,

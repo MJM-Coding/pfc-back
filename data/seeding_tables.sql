@@ -24,7 +24,7 @@ INSERT INTO "user" (lastname, firstname, email, password, role) VALUES
 ('Morel', 'Lucie', 'lucie.morel@email.com', '864ab6d6b5192b2f0ace956f203083cf7b9c8fe1c668268ec105ee87a941a194cae1e15259a761237c9e9be094a03a67d4582ace1601c09a50638663eb86ea74.7945e9c6588ca1f974477512416c9174', 'family'),
 ('Garnier', 'Raphaël', 'raphael.garnier@email.com', 'cf2b875ed59e6040ac720d6376a7f9080f9b19148d47431907b16464f90538cbfa07f916ec7a0a19fea9f73494f0d77f28576f27948aae0bcb2218bdf2873145.842d114c4fb2dc07b26bec5e6bec3fae', 'association'),
 ('David', 'Alice', 'alice.david@email.com', 'a4e3162901dd6a523be9b8e2a83742da6289bf5ae6e8fcc1eabae9806623649155b01d0dc90a3bb38d4963643d09dca130d8272d2ca6247f840b575de013f70c.1009c50fd33fc1e057322cacc36f8d7a', 'family'),
-('Durand', 'Hugo', 'hugo.durand@email.com', 'a5039feb79f05ccef2dddd04bb67f73a913926ad99888803a413a5d81321854c39d5a4a365e63eed9f86a67e529681016325191d68406e391285d10019de58db.be51b3f1c45b49905be66d3ea8ca66fa', 'family'),
+('Durand', 'Hugo', 'antoine.durand@email.com', 'a5039feb79f05ccef2dddd04bb67f73a913926ad99888803a413a5d81321854c39d5a4a365e63eed9f86a67e529681016325191d68406e391285d10019de58db.be51b3f1c45b49905be66d3ea8ca66fa', 'family'),
 (' admin',  'admin', 'admin@admin.com', '740cf80e4b06b57ee1a4c4fc9f5fbec3db0ec45713b98071a14439697759072083f739346b6a331e641612c3968a0c8f5e238be2adc37b120e66caedfde9da18.b321c70997b1f4e6f3f57aadbc4c35d1', 'admin');
 
 -- Insertion dans la table "family"
@@ -41,7 +41,7 @@ INSERT INTO family (address, postal_code, city, phone, number_of_children, numbe
 ('23 Rue de la Mer', '59000', 'Lille', '0634567890', 1, 0, true, 'Famille Bourgeois vivant en bord de mer.', 'images/users/Bourgeoisphilippe-fa.webp', 15),
 ('45 Avenue du Lac', '34000', 'Montpellier', '0645123456', 3, 2, false, 'Famille Vasseur avec des enfants et des animaux.', 'images/users/Vasseurjulien-fa.webp', 17),
 ('67 Boulevard des Jardins', '75014', 'Paris', '0621345678', 2, 1, true, 'Famille Meyer passionnée de jardinage.', 'images/users/Meyerclara-fa.webp', 18),
-('89 Rue des Champs', '69006', 'Lyon', '0656789123', 2, 0, true, 'Famille Hugo avec un grand jardin.', 'images/users/Duranthugo-fa.webp', 25),
+('89 Rue des Champs', '69006', 'Lyon', '0656789123', 2, 0, true, 'Famille Hugo avec un grand jardin.', 'images/users/Durantantoine-fa.webp', 25),
 ('101 Avenue de la Liberté', '44000', 'Nantes', '0678901235', 3, 2, false, 'Famille Morel avec des animaux exotiques.', 'images/users/Morellouis-fa.webp', 22),
 ('23 Rue des Belles Vues', '38000', 'Grenoble', '0689123456', 0, 0, true, 'Famille David accueillant des voyageurs.', 'images/users/Davidalice-fa.webp', 24);
 

@@ -11,6 +11,7 @@ import { askRouter } from "./askRouter.js"; // router secondaire pour les routes
 import { associationRouter } from "./associationRouter.js"; // router secondaire pour les routes liées aux associations
 import { familyRouter } from "./familyRouter.js"; // router secondaire pour les routes liées aux familles d'accueil
 import { userRouter } from "./userRouter.js"; // router secondaire pour les routes liées aux utilisateurs
+import { createUserController } from "../controllers/createUserController.js";
 
 import { validate } from "../validation/validate.js"; // Importation de la fonction de validation
 import { createSchema } from "../validation/allUser.js"; // Importation du schéma d'inscription JOI
@@ -35,6 +36,8 @@ mainRouter.post("/signin", withTryCatch(signinController.signinUser)); // Connex
 //! Route de raffraichissement du token
 mainRouter.post("/refresh-token", withTryCatch(signinController.refreshToken));
 
+//! Route pour confirmer l'email
+mainRouter.get("/confirm-email/:token", createUserController.confirmEmail);
 
 // *Middleware pour gérer les routes non trouvées
 mainRouter.use((req, res, next)=>{

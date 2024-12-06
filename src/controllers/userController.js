@@ -17,6 +17,7 @@ export const userController = {
     res.status(200).json(users);
   },
 
+  //! Recuperer un seul utilisateur
   getOneUser: async (req, res) => {
     const userId = req.params.id;
     const user = await User.findByPk(userId, {

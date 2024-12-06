@@ -216,40 +216,30 @@ patchAnimal: async (req, res) => {
     //! Gestion des photos supplémentaires
     if (req.files && req.files.photos) {
       const photoFields = ["photo1", "photo2", "photo3"];
-      const additionalPhotos = req.files.photos; // Assurez-vous que multer traite "photos" comme un tableau
-
-      for (let i = 0; i < additionalPhotos.length; i++) {
-        if (i >= photoFields.length) break;
-
+      const additionalPhotos = req.files.photos; // Photos envoyées dans la requête
+      let photoIndex = 0; // Index des nouvelles photos à ajouter
+    
+      for (let i = 0; i < photoFields.length; i++) {
         const currentPhoto = selectedAnimal[photoFields[i]];
-        const newPhoto = additionalPhotos[i];
-
-        // Supprimer l'ancienne photo si elle existe
-        if (currentPhoto) {
-          if (currentPhoto.startsWith("images/")) {
-            const localFilePath = path.join(process.cwd(), "public", currentPhoto);
-            try {
-              await fs.unlink(localFilePath);
-              console.log(`Fichier local supprimé : ${localFilePath}`);
-            } catch (err) {
-              console.warn(`Erreur lors de la suppression du fichier local : ${err.message}`);
-            }
-          } else {
-            const publicId = currentPhoto.split("/").pop().split(".")[0];
-            try {
-              await cloudinary.v2.uploader.destroy(publicId);
-              console.log(`Image Cloudinary supprimée : ${publicId}`);
-            } catch (err) {
-              console.warn(`Erreur lors de la suppression sur Cloudinary : ${err.message}`);
-            }
-          }
+    
+        // Ajouter une nouvelle photo dans un champ vide
+        if (!currentPhoto && additionalPhotos[photoIndex]) {
+          const uploadedPhoto = await uploadToCloudinary(additionalPhotos[photoIndex]);
+          selectedAnimal[photoFields[i]] = uploadedPhoto;
+          photoIndex++;
         }
-
-        // Upload de la nouvelle photo
-        const uploadedPhoto = await uploadToCloudinary(newPhoto);
-        selectedAnimal[photoFields[i]] = uploadedPhoto;
+    
+        // Arrêter si toutes les nouvelles photos ont été traitées
+        if (photoIndex >= additionalPhotos.length) break;
+      }
+    
+      // Si toutes les colonnes sont occupées et des photos restent non traitées
+      if (photoIndex < additionalPhotos.length) {
+        throw new Error("Impossible d'ajouter plus de 3 photos. Supprimez une photo existante avant d'ajouter une nouvelle.");
       }
     }
+    
+    
 
     // Mettre à jour les autres champs
     const updates = req.body;
