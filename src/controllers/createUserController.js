@@ -120,18 +120,60 @@ export const createUserController = {
         to: user.email,
         subject: "Confirmation de votre inscription",
         html: `
-          <h1>Bienvenue, ${user.firstname} !</h1>
-          <p>Merci de vous être inscrit. Cliquez sur le lien suivant pour confirmer votre email :</p>
-          <a href="${confirmationUrl}">Confirmer mon email</a>
-          <p>Ce lien expirera dans 24 heures.</p>
-        `,
+        <table width="100%" style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; background-color: #f9f9f9; padding: 20px; margin: 0;">
+          <tr>
+            <td align="center">
+              <table width="600" style="max-width: 600px; margin: auto; background-color: #07091E; color: #fff; border-radius: 8px; overflow: hidden; border-spacing: 0;">
+                <!-- Titre en haut -->
+                <tr>
+                  <td style="padding: 20px; text-align: center; background-color: #07091E; color: #fff;">
+                    <h1 style="margin: 0; font-size: 28px; color: #fff;">Bienvenue, ${user.firstname} !</h1>
+                  </td>
+                </tr>
+                <!-- Bannière avec image -->
+                <tr>
+                  <td style="padding: 0; text-align: center; background-color: #000;">
+                    <img src="https://res.cloudinary.com/depggx3rv/image/upload/v1733667774/confirmation%20mail/udrkziv5veomktffjtj3.png" 
+                         alt="Confirmation Mail"
+                          role="presentation"
+                         style="width: 100%; height: auto; display: block; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                  </td>
+                </tr>
+                <!-- Texte principal -->
+                <tr>
+                  <td style="padding: 20px; background-color: #07091E; color: #fff; text-align: center;">
+                    <p style="margin: 0 0 10px;">Merci de vous être inscrit sur notre site Pet Foster Connect.</p>
+                    <p style="margin: 0 0 20px;">Cliquez sur le lien suivant pour confirmer votre email :</p>
+                    <a href="${confirmationUrl}" 
+                       style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Confirmer mon email</a>
+                    <p style="margin-top: 20px; font-size: 12px; color: #aaa;">Ce lien expirera dans 24 heures.</p>
+                  </td>
+                </tr>
+
+            <!-- Message "Ne pas répondre" -->
+          <tr>
+            <td style="padding: 10px; background-color: #07091E; text-align: center; color: #aaa; font-size: 12px;">
+              <p style="margin: 0;">Veuillez ne pas répondre à cet email. Ce message est généré automatiquement.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+`,
+
+      
+      
+      
+      
       });
   
-      console.log("Email de confirmation envoyé à :", user.email);
+      console.log("Email envoyé avec succès.");
     } catch (error) {
-      console.error("Erreur lors de l'envoi de l'email :", error);
+      console.error("Erreur lors de l'envoi de l'email de confirmation :", error);
     }
   },
+      
   
 
   //! Fonction pour confirmer un email
