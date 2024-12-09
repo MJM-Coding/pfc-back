@@ -20,10 +20,19 @@ Ask.init(
       allowNull: false,
       defaultValue: "en attente",
     },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW, // Date par défaut
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW, // Date par défaut
+    },
   },
   {
     sequelize: sequelize,
     tableName: "ask",
+    
   }
 );
 

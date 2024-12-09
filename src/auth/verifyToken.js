@@ -26,9 +26,14 @@ export const verifyToken = (req, res, next) => {
 
     // Si le token est valide, ajoute les informations de l'utilisateur décodées (payload du token) à `req.user`
     // Cela permet aux prochaines étapes de la requête d'accéder aux informations de l'utilisateur
-    req.user = user;
-
-    
+    req.user = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      id_family:  user.id_family,
+      id_association:  user.id_association,
+    };
+    console.log("Utilisateur ajouté à req.user :", req.user);
     next();
   });
 };

@@ -1,61 +1,95 @@
-import {Association, Family, User} from "../models/index.js";
+import { Association, Family, User } from "../models/index.js";
 
-export function verifyFamily () {
+export function verifyFamily() {
     return async function (req, res, next) {
-        const familyId = req.params.id || req.params.familyId;
-
-        const family = await Family.findByPk(familyId);
+      const familyId = req.params.id || req.params.familyId;
+  
+      console.log("verifyFamily - familyId :", familyId);
+      console.log("verifyFamily - req.user :", req.user);
+  
+      if (!familyId) {
+        return res.status(400).json({ error: "ID de famille manquant dans la requête" });
+      }
+  
+      try {
+        const family = await Family.findOne({
+          where: { id: familyId },
+          include: [{ model: User }],
+        });
+  
+        console.log("verifyFamily - family trouvé :", family);
+  
         if (!family) {
-            return res.status(404).json({
-                error: "Profil famille non trouvé"
-            });
+          return res.status(404).json({ error: "Profil famille non trouvé" });
         }
-        const familyUser = await family.getUser();
-        if (familyUser.id !== req.user.id) {
-            return res.status(403).json({
-                error: "Accès interdit: Vous n'etes pas habilité"
-            });
+  
+        if (family.User.id !== req.user.id) {
+          console.error("verifyFamily - Accès interdit : ID utilisateur ne correspond pas");
+          return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas habilité" });
         }
+  
         next();
+      } catch (error) {
+        console.error("Erreur dans verifyFamily :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+      }
     };
-};
+  }
+  
 
+export function verifyAssociation() {
+  return async function (req, res, next) {
+    const associationId = req.params.id || req.params.associationId;
 
-export function verifyAssociation () {
-    return async function (req, res, next) {
-        const associationId = req.params.id || req.params.associationId;
+    if (!associationId) {
+      return res.status(400).json({ error: "ID d'association manquant dans la requête" });
+    }
 
-        const association = await Association.findByPk(associationId);
-        if (!association) {
-            return res.status(404).json({
-                error: "Profil association non trouvé"
-            });
-        }
-        const associationUser = await association.getUser();
-        if (associationUser.id !== req.user.id) {
-            return res.status(403).json({
-                error: "Accès interdit: Vous n'etes pas habilité"
-            });
-        }
-        next();
-    };
-};
+    try {
+      const association = await Association.findOne({
+        where: { id: associationId },
+        include: [{ model: User }],
+      });
+
+      if (!association) {
+        return res.status(404).json({ error: "Profil association non trouvé" });
+      }
+
+      if (association.User.id !== req.user.id) {
+        return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas habilité" });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Erreur dans verifyAssociation :", error);
+      res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+  };
+}
 
 export function verifyUser() {
-    return async function (req, res, next) {
-        const userId = req.params.id || req.params.userId;
-        const user = await User.findByPk(userId);
-        if (!user) {
-            return res.status(404).json({
-                error: "Profil utilisateur non trouvé"
-            });
-        }
-        
-        if (user.id !== req.user.id) {
-            return res.status(403).json({
-                error: "Accès interdit: Vous n'etes pas habilité"
-            });
-        }
-        next();
-    };
-};
+  return async function (req, res, next) {
+    const userId = req.params.id || req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ error: "ID utilisateur manquant dans la requête" });
+    }
+
+    try {
+      const user = await User.findByPk(userId);
+
+      if (!user) {
+        return res.status(404).json({ error: "Profil utilisateur non trouvé" });
+      }
+
+      if (user.id !== req.user.id) {
+        return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas habilité" });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Erreur dans verifyUser :", error);
+      res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+  };
+}
