@@ -15,7 +15,7 @@ askRouter.get("/:id", isRoleAuthorizedMiddleware(["admin"]), withTryCatch(askCon
 askRouter.patch(
     "/:id",
     verifyToken, // Ajout du middleware pour vérifier le token
-    isRoleAuthorizedMiddleware(["admin", "family"]), // Vérification du rôle
+    isRoleAuthorizedMiddleware(["admin", "association", ]), // Vérification du rôle
     withTryCatch(askController.patchAsk) // Contrôleur pour gérer la modification de la demande
   );
   
@@ -29,3 +29,12 @@ askRouter.get(
     isRoleAuthorizedMiddleware(["family"]), // Vérifie que l'utilisateur a le rôle "family"
     withTryCatch(askController.getFamilyAsks), // Utilise le middleware withTryCatch pour gérer les erreursgetFamilyAsks // Appelle le contrôleur
   );
+
+
+  askRouter.delete(
+    "/:id",
+    verifyToken, // Middleware pour vérifier le token
+    isRoleAuthorizedMiddleware(["family"]), // Vérifie que l'utilisateur a le rôle "family"
+    withTryCatch(askController.deleteAsk) // Utilise le middleware withTryCatch pour gérer les erreurs
+  );
+  

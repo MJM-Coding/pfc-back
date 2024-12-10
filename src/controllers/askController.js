@@ -67,32 +67,29 @@ export const askController = {
 
   //! Méthode pour modifier une demande
   patchAsk: async (req, res) => {
-    const id = req.params.id;
-    const newStatut = req.body; 
-    const ask = await Ask.findByPk(id);
+    const { id: askId } = req.params; 
+    const newStatus = req.body.status?.toLowerCase();
   
+    // Vérifier si le statut est valide
+    const validStatuses = ["en attente", "validée", "rejetée"];
+    if (!validStatuses.includes(newStatus)) {
+      throw new HttpError(400, "Statut invalide. Les statuts valides sont : 'en attente', 'validée', 'rejetée'.");
+    }
+  
+    // Récupérer la demande par son ID
+    const ask = await Ask.findByPk(askId);
     if (!ask) {
-      return res.status(404).json({ error: "Request not found." });
+      throw new HttpError(404, "Demande non trouvée.");
     }
-   
-
-    console.log('User ID Family:', req.user.id_family);
-    console.log('Ask ID Family:', ask.id_family);
-    // Vérification de l'autorisation
-  if (req.user.role !== 'admin' && req.user.id_family !== ask.id_family) {
-  return res.status(403).json({ error: "Vous n'êtes pas autorisé à modifier cette demande." });
-}
-
   
-    // Mise à jour du statut si une valeur spécifique est fournie (par exemple "cancelled")
-    if (newStatut.status === "cancelled") {
-      await ask.update({ status: "cancelled" });
-    } else {
-      return res.status(400).json({ error: "Statut invalide pour l'annulation." });
-    }
-    
-    return res.status(200).json(ask);
+    // Mettre à jour le statut
+    ask.status = newStatus;
+    await ask.save();
+  
+    // Répondre avec la demande mise à jour
+    res.status(200).json(ask);
   },
+  
   
   
 
@@ -137,5 +134,40 @@ export const askController = {
       console.error("Erreur dans getFamilyAsks :", error);
       res.status(500).json({ error: "Erreur interne du serveur." });
     }
+  },
+
+
+//! Méthode pour supprimer une demande (pour une famille qui souhaite annuler sa demande)
+deleteAsk: async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la demande à supprimer
+
+    // Vérifie si la demande existe
+    const ask = await Ask.findByPk(id);
+
+    if (!ask) {
+      return res.status(404).json({ error: "Demande non trouvée." });
+    }
+
+    // Vérifie si l'utilisateur est autorisé à supprimer cette demande
+    const family = await Family.findOne({
+      where: { id_user: req.user.id },
+    });
+
+    if (!family || family.id !== ask.id_family) {
+      return res
+        .status(403)
+        .json({ error: "Vous n'êtes pas autorisé à supprimer cette demande." });
+    }
+
+    // Suppression de la demande
+    await ask.destroy();
+
+    res.status(200).json({ message: "Demande supprimée avec succès." });
+  } catch (error) {
+    console.error("Erreur dans deleteAsk :", error);
+    res.status(500).json({ error: "Erreur interne du serveur." });
   }
-};  
+},
+
+};

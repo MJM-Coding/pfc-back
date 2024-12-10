@@ -17,6 +17,7 @@ const {
 
 const sequelize = new Sequelize(
   `postgres://${user}:${password}@${host}:${port}/${database}`,
+  
   {
     dialect: "postgres",
     logging: console.log,
