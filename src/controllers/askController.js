@@ -120,7 +120,7 @@ export const askController = {
           {
             model: Animal,
             as: "animal",
-            attributes: ["id", "name", "species", "breed", "profile_photo"],
+            attributes: ["id", "name", "species", "breed", "profile_photo", "gender", "age", "size", "description"],
           },
         ],
       });
@@ -137,24 +137,40 @@ export const askController = {
   },
 
 
-//! Méthode pour supprimer une demande (pour une famille qui souhaite annuler sa demande)
+//! Méthode pour supprimer une demande (pour une famille qui souhaite annuler sa demande) ou une association
 deleteAsk: async (req, res) => {
   try {
     const { id } = req.params; // ID de la demande à supprimer
 
-    // Vérifie si la demande existe
-    const ask = await Ask.findByPk(id);
+    // Vérifie si la demande existe et inclut l'animal
+    const ask = await Ask.findByPk(id, {
+      include: [{ model: Animal, as: "animal" }],
+    });
 
     if (!ask) {
       return res.status(404).json({ error: "Demande non trouvée." });
     }
 
-    // Vérifie si l'utilisateur est autorisé à supprimer cette demande
+    // Vérifie si l'utilisateur est une famille
     const family = await Family.findOne({
       where: { id_user: req.user.id },
     });
 
-    if (!family || family.id !== ask.id_family) {
+    console.log("Family trouvé :", family);
+
+    // Vérifie si l'utilisateur est une association
+    const association = await Association.findOne({
+      where: { id_user: req.user.id },
+    });
+
+    console.log("Association trouvée :", association);
+    console.log("ID association de la demande (via animal) :", ask.animal.id_association);
+
+    // Vérifie les autorisations
+    if (
+      (!family || family.id !== ask.id_family) &&
+      (!association || association.id !== ask.animal.id_association)
+    ) {
       return res
         .status(403)
         .json({ error: "Vous n'êtes pas autorisé à supprimer cette demande." });
@@ -169,5 +185,7 @@ deleteAsk: async (req, res) => {
     res.status(500).json({ error: "Erreur interne du serveur." });
   }
 },
+
+
 
 };

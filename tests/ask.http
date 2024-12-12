@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###* AVEC TOKEN
 POST http://localhost:3000/api/ask
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsImVtYWlsIjoiYWxpY2UuZGF2aWRAZW1haWwuY29tIiwicm9sZSI6ImZhbWlseSIsImlhdCI6MTczMzg2Mzg1NywiZXhwIjoxNzMzODY3NDU3fQ.ZAesYGmCBkPov_MR13mrHuhjPL6HBNvH51XrMAPlbAI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsImVtYWlsIjoiYWxpY2UuZGF2aWRAZW1haWwuY29tIiwicm9sZSI6ImZhbWlseSIsImlhdCI6MTczMzk5NDQ4OCwiZXhwIjoxNzMzOTk4MDg4fQ.FaWCMb_10-ct4TIetoaEbkpqiCKQvfmYCB8GNZBE6OY
 Content-Type: application/json
 
 {
@@ -42,8 +42,8 @@ Content-Type: application/json
 #------------------Modifier une alerte--------------------------
 
 ### !  SANS TOKEN
-PATCH http://localhost:3000/api/ask/7
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwaWVycmUuZHVib2lzQGVtYWlsLmNvbSIsInJvbGUiOiJhc3NvY2lhdGlvbiIsImlhdCI6MTczMzg2MTMzOSwiZXhwIjoxNzMzODY0OTM5fQ.xcnrYicCthYH3FoSLx361sI6rvHFHoG1tkZi2Nmu7Mw
+PATCH http://localhost:3000/api/ask/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwaWVycmUuZHVib2lzQGVtYWlsLmNvbSIsInJvbGUiOiJhc3NvY2lhdGlvbiIsImlhdCI6MTczMzk5NDQ0MCwiZXhwIjoxNzMzOTk4MDQwfQ.4iA2mAfSSLHuWfYIrl1jepq2KuyCtq_MclLzZ3XnLKA
 Content-Type: application/json
 
 {

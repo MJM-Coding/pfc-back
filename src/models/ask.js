@@ -2,15 +2,15 @@ import { Model, DataTypes } from "sequelize";
 import sequelize from "./client.js";
 import Animal from "./animal.js";
 import Family from "./family.js";
+import Association from "./association.js"; // Import du modèle Association
 
 export default class Ask extends Model {
   static associate(models) {
-    // Associations définies ici
     Ask.belongsTo(models.Animal, { foreignKey: "id_animal", as: "animal" });
     Ask.belongsTo(models.Family, { foreignKey: "id_family", as: "family" });
+   
   }
 }
-
 
 Ask.init(
   {
@@ -41,6 +41,7 @@ Ask.init(
         key: "id",
       },
     },
+  
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -53,7 +54,6 @@ Ask.init(
   {
     sequelize: sequelize,
     tableName: "ask",
-    timestamps: false, // Si vous gérez manuellement created_at et updated_at
+    timestamps: false,
   }
 );
-

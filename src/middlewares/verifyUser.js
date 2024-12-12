@@ -4,8 +4,6 @@ export function verifyFamily() {
     return async function (req, res, next) {
       const familyId = req.params.id || req.params.familyId;
   
-      console.log("verifyFamily - familyId :", familyId);
-      console.log("verifyFamily - req.user :", req.user);
   
       if (!familyId) {
         return res.status(400).json({ error: "ID de famille manquant dans la requête" });
@@ -16,9 +14,7 @@ export function verifyFamily() {
           where: { id: familyId },
           include: [{ model: User }],
         });
-  
-        console.log("verifyFamily - family trouvé :", family);
-  
+   
         if (!family) {
           return res.status(404).json({ error: "Profil famille non trouvé" });
         }

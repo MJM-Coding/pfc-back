@@ -8,33 +8,14 @@ import { verifyToken } from "../auth/verifyToken.js";
 
 export const askRouter = Router();
 
-//* Routes accessibles uniquement aux admin
-askRouter.get("/", isRoleAuthorizedMiddleware(["admin"]),withTryCatch(askController.getAllAsks)); // Route pour lister toutes les demandes
-askRouter.get("/:id", isRoleAuthorizedMiddleware(["admin"]), withTryCatch(askController.getAskById)); // Route pour obtenir le détail d'une demande
-
-askRouter.patch(
-    "/:id",
-    verifyToken, // Ajout du middleware pour vérifier le token
-    isRoleAuthorizedMiddleware(["admin", "association", ]), // Vérification du rôle
-    withTryCatch(askController.patchAsk) // Contrôleur pour gérer la modification de la demande
-  );
+//* Routes accessibles uniquement aux admin + association
+askRouter.get("/", verifyToken,isRoleAuthorizedMiddleware(["admin", "association"]),withTryCatch(askController.getAllAsks)); // Route pour lister toutes les demandes
+askRouter.get("/:id", verifyToken,isRoleAuthorizedMiddleware(["admin","association"]), withTryCatch(askController.getAskById)); // Route pour obtenir le détail d'une demande
+askRouter.patch("/:id",verifyToken,isRoleAuthorizedMiddleware(["admin", "association", ]),withTryCatch(askController.patchAsk)); // Route pour modifier une demande
+  
   
 //* Routes accessibles uniquement aux familles d'accueil
 askRouter.post("/", verifyToken, isRoleAuthorizedMiddleware(["family"]),withTryCatch(askController.createAsk)); // Route pour créer une nouvelle demande
-
-// Route pour récupérer les demandes pour une famille
-askRouter.get(
-    "/family/:id/asks",
-    verifyToken, // Vérifie le token de l'utilisateur
-    isRoleAuthorizedMiddleware(["family"]), // Vérifie que l'utilisateur a le rôle "family"
-    withTryCatch(askController.getFamilyAsks), // Utilise le middleware withTryCatch pour gérer les erreursgetFamilyAsks // Appelle le contrôleur
-  );
-
-
-  askRouter.delete(
-    "/:id",
-    verifyToken, // Middleware pour vérifier le token
-    isRoleAuthorizedMiddleware(["family"]), // Vérifie que l'utilisateur a le rôle "family"
-    withTryCatch(askController.deleteAsk) // Utilise le middleware withTryCatch pour gérer les erreurs
-  );
+askRouter.get("/family/:id/asks",verifyToken,isRoleAuthorizedMiddleware(["family"]), withTryCatch(askController.getFamilyAsks));// Route pour récupérer les demandes pour une famille
+askRouter.delete("/:id",verifyToken, isRoleAuthorizedMiddleware(["family","association"]),withTryCatch(askController.deleteAsk)); // Route pour supprimer une demande
   
