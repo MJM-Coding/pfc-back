@@ -58,7 +58,7 @@ export const askController = {
     });
 
     if (existingAsk) {
-      return res.status(409).json({ message: "A similar request already exists." });
+      return res.status(409).json({ message: "Une demande pour cet animal est déjà en cours. Merci d'attendre la validation par l'association." });
     }
 
     const newAsk = await Ask.create(ask); 
@@ -67,28 +67,125 @@ export const askController = {
 
   //! Méthode pour modifier une demande
   patchAsk: async (req, res) => {
-    const id = req.params.askId; 
-    const newStatut = (req.body);
-    const ask = await Ask.findByPk(id);
+    const { id: askId } = req.params; 
+    const newStatus = req.body.status?.toLowerCase();
+  
+    // Vérifier si le statut est valide
+    const validStatuses = ["en attente", "validée", "rejetée"];
+    if (!validStatuses.includes(newStatus)) {
+      throw new HttpError(400, "Statut invalide. Les statuts valides sont : 'en attente', 'validée', 'rejetée'.");
+    }
+  
+    // Récupérer la demande par son ID
+    const ask = await Ask.findByPk(askId);
+    if (!ask) {
+      throw new HttpError(404, "Demande non trouvée.");
+    }
+  
+    // Mettre à jour le statut
+    ask.status = newStatus;
+    await ask.save();
+  
+    // Répondre avec la demande mise à jour
+    res.status(200).json(ask);
+  },
+  
+  
+  
+
+  //! Méthode pour lister toutes les demandes d'une famille
+   
+  getFamilyAsks: async (req, res) => {
+    try {
+      // Identifie l'utilisateur actuel
+      const userId = req.user.id;
+  
+      // Vérifie si l'utilisateur est lié à une famille
+      const family = await Family.findOne({
+        where: { id_user: userId },
+      });
+  
+      if (!family) {
+        return res
+          .status(403)
+          .json({ error: "Accès interdit : Vous n'êtes pas autorisé à consulter ces demandes." });
+      }
+  
+      const familyId = family.id;
+  
+      // Récupère les demandes d'accueil pour cette famille
+      const asks = await Ask.findAll({
+        where: { id_family: familyId },
+        include: [
+          {
+            model: Animal,
+            as: "animal",
+            attributes: ["id", "name", "species", "breed", "profile_photo", "gender", "age", "size", "description"],
+          },
+        ],
+      });
+  
+      if (!asks || asks.length === 0) {
+        return res.status(200).json([]); // Renvoie un tableau vide avec un statut 200
+      }
+  
+      res.status(200).json(asks);
+    } catch (error) {
+      console.error("Erreur dans getFamilyAsks :", error);
+      res.status(500).json({ error: "Erreur interne du serveur." });
+    }
+  },
+
+
+//! Méthode pour supprimer une demande (pour une famille qui souhaite annuler sa demande) ou une association
+deleteAsk: async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la demande à supprimer
+
+    // Vérifie si la demande existe et inclut l'animal
+    const ask = await Ask.findByPk(id, {
+      include: [{ model: Animal, as: "animal" }],
+    });
 
     if (!ask) {
-      throw new HttpError(404, "Request not found."); 
+      return res.status(404).json({ error: "Demande non trouvée." });
     }
 
-    newStatut.status = newStatut.status.toLowerCase();
+    // Vérifie si l'utilisateur est une famille
+    const family = await Family.findOne({
+      where: { id_user: req.user.id },
+    });
 
-    // ask.status = req.body.status;
-    Object.assign(ask, newStatut); // Mise à jour des données de la demande
-    await ask.save(); // Enregistrement de la nouvelle demande
+    console.log("Family trouvé :", family);
 
-    if (ask.status === "validé") {
-      const newFamilyId = {id_family : ask.id_family}
-      const animal = await ask.getAnimal();
+    // Vérifie si l'utilisateur est une association
+    const association = await Association.findOne({
+      where: { id_user: req.user.id },
+    });
 
-      Object.assign(animal, newFamilyId);
-      await animal.save();
+    console.log("Association trouvée :", association);
+    console.log("ID association de la demande (via animal) :", ask.animal.id_association);
+
+    // Vérifie les autorisations
+    if (
+      (!family || family.id !== ask.id_family) &&
+      (!association || association.id !== ask.animal.id_association)
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Vous n'êtes pas autorisé à supprimer cette demande." });
     }
 
-    res.status(200).json(ask); // Envoie de la nouvelle demande mise à jour en réponse sous forme de JSON
-  },
+    // Suppression de la demande
+    await ask.destroy();
+
+    res.status(200).json({ message: "Demande supprimée avec succès." });
+  } catch (error) {
+    console.error("Erreur dans deleteAsk :", error);
+    res.status(500).json({ error: "Erreur interne du serveur." });
+  }
+},
+
+
+
 };

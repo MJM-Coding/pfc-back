@@ -73,8 +73,6 @@ deleteProfilePhoto: async (req, res) => {
 },
 
 
-
-
   //! Methode pour modifier une famille
   patchFamily: async (req, res, next) => {
     const familyId = req.params.id;

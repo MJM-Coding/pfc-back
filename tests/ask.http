@@ -31,22 +31,23 @@ Content-Type: application/json
 
 ###* AVEC TOKEN
 POST http://localhost:3000/api/ask
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImVtYWlsIjoicGhpbGlwcGUuYm91cmdlb2lzQGVtYWlsLmNvbSIsInJvbGUiOiJmYW1pbHkiLCJpYXQiOjE3MzE0ODc1MzUsImV4cCI6MTczMTQ5MTEzNX0.Cs6NUwY6Clb-B4c3ck4eA8S2BeZCjQFiFEa4c79ZsRY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsImVtYWlsIjoiYWxpY2UuZGF2aWRAZW1haWwuY29tIiwicm9sZSI6ImZhbWlseSIsImlhdCI6MTczMzk5NDQ4OCwiZXhwIjoxNzMzOTk4MDg4fQ.FaWCMb_10-ct4TIetoaEbkpqiCKQvfmYCB8GNZBE6OY
 Content-Type: application/json
 
 {
-  "id_family": 1,
-  "id_animal": 12
+  "id_family": 15,
+  "id_animal": 3
 }
 
 #------------------Modifier une alerte--------------------------
 
 ### !  SANS TOKEN
 PATCH http://localhost:3000/api/ask/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJwaWVycmUuZHVib2lzQGVtYWlsLmNvbSIsInJvbGUiOiJhc3NvY2lhdGlvbiIsImlhdCI6MTczMzk5NDQ0MCwiZXhwIjoxNzMzOTk4MDQwfQ.4iA2mAfSSLHuWfYIrl1jepq2KuyCtq_MclLzZ3XnLKA
 Content-Type: application/json
 
 {
-  "status": "en cours"
+  "status": "validée"
 }
 
 
