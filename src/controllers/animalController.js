@@ -260,6 +260,7 @@ export const animalController = {
     const updates = req.body;
     await selectedAnimal.update({
       ...updates,
+      is_paused: updates.is_paused !== undefined ? updates.is_paused : selectedAnimal.is_paused,
       profile_photo: selectedAnimal.profile_photo,
       photo1: selectedAnimal.photo1,
       photo2: selectedAnimal.photo2,

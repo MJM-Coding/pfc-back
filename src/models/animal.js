@@ -66,6 +66,11 @@ Animal.init(
     photo3: {
       type: DataTypes.STRING,
     },
+    is_paused: {
+      type : DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    }
   },
   {
     sequelize: sequelize,

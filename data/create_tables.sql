@@ -72,6 +72,7 @@ CREATE TABLE animal (
   photo1           VARCHAR(255),
   photo2           VARCHAR(255),
   photo3           VARCHAR(255),
+  is_paused        BOOLEAN DEFAULT FALSE,
   id_family        INT REFERENCES family(id),
   id_association   INT NOT NULL REFERENCES association(id) ON DELETE CASCADE,
   created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

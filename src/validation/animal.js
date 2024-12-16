@@ -15,6 +15,7 @@ export const createSchema = Joi.object({
   photo3: Joi.string().optional().allow(null),
   id_family: Joi.number().integer(),
   id_association: Joi.number().integer(),
+  is_paused: Joi.boolean().default(false),
 });
 
 export const patchSchema = Joi.object({
@@ -32,4 +33,5 @@ export const patchSchema = Joi.object({
   images: Joi.array().items(Joi.string().dataUri()).min(1).max(4).optional(),
   id_family: Joi.number().integer(),
   id_association: Joi.number().integer(),
+  is_paused: Joi.boolean().default(false),
 }).min(1);
