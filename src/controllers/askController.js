@@ -58,7 +58,7 @@ export const askController = {
     });
 
     if (existingAsk) {
-      return res.status(409).json({ message: "Une demande pour cet animal est déjà en cours. Merci d'attendre la validation par l'association." });
+      return res.status(409).json({ message: "Une demande pour cet animal est déjà en cours. Merci d'attendre la réponse de l'association."});
     }
 
     const newAsk = await Ask.create(ask); 

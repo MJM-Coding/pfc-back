@@ -179,60 +179,57 @@ export const createUserController = {
   //! Fonction pour confirmer un email
   async confirmEmail(req, res) {
     const { token } = req.params;
-  
-    console.log("Token reçu :", token);
-  
-    try {
-      // Décoder le token JWT
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("Payload décodé :", decoded);
-  
-      // Rechercher l'utilisateur
-      const user = await User.findOne({
-        where: {
-          id: decoded.id,
-          email: decoded.email,
-          confirmationtoken: token,
-          tokenexpiration: { [Op.gt]: new Date() },
-        },
-      });
-  
-      if (!user) {
-        return res.status(400).json({ message: "Jeton invalide ou expiré." });
-      }
-  
-     // Confirmez l'utilisateur
-     console.log("Avant confirmation :", user.toJSON()); // Log avant mise à jo
-user.isverified = true; // Assurez-vous d'utiliser le bon nom ici
-user.confirmationtoken = null; // Supprime le jeton après confirmation
-user.tokenexpiration = null; // Supprime la date d'expiration
 
-try {
-  await user.save();
-  console.log("Après confirmation :", user.toJSON()); // Log après mise à jour
-  console.log("Utilisateur confirmé :", user.toJSON()); // Log après mise à jour
-} catch (error) {
-  console.error("Erreur lors de la sauvegarde de l'utilisateur :", error);
-}
-  
-      // Générer un token de session après confirmation
-      const sessionToken = generateTokenForSession(user);
-  
-      return res.status(200).json({
+    console.log("Token reçu :", token);
+
+    // Décoder le token JWT
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        console.error("Erreur lors de la vérification du token :", error);
+        if (error.name === "TokenExpiredError") {
+            return res.status(400).json({ message: "Le jeton a expiré." });
+        }
+        return res.status(400).json({ message: "Jeton invalide." });
+    }
+
+    console.log("Payload décodé :", decoded);
+
+    // Rechercher l'utilisateur
+    const user = await User.findOne({
+        where: {
+            id: decoded.id,
+            email: decoded.email,
+            confirmationtoken: token,
+            tokenexpiration: { [Op.gt]: new Date() },
+        },
+    });
+
+    if (!user) {
+        console.error("Utilisateur non trouvé ou jeton invalide/expiré.");
+        return res.status(400).json({ message: "Jeton invalide ou expiré." });
+    }
+
+    console.log("Avant confirmation :", user.toJSON());
+
+    // Mettre à jour l'utilisateur
+    user.isverified = true;
+    user.confirmationtoken = null;
+    user.tokenexpiration = null;
+
+    await user.save();
+
+    console.log("Après confirmation :", user.toJSON());
+
+    // Générer un token de session après confirmation
+    const sessionToken = generateTokenForSession(user);
+
+    return res.status(200).json({
         message: "Votre email a été confirmé avec succès !",
         token: sessionToken, // Token pour la session
-      });
-    } catch (error) {
-      console.error("Erreur lors de la confirmation de l'email :", error);
-  
-      if (error.name === "TokenExpiredError") {
-        return res.status(400).json({ message: "Le jeton a expiré." });
-      }
-  
-      return res.status(500).json({ error: "Erreur lors de la confirmation de l'email." });
-    }
-  },
-  
+    });
+}
 };
 
 export default createUserController;
