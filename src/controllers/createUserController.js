@@ -1,7 +1,7 @@
 import User from "../models/user.js";
 import { Op } from 'sequelize';
 import { Scrypt } from "../auth/Scrypt.js";
-import { generateToken, generateTokenForSession } from "../auth/tokenService.js";
+import { generateConfirmationToken, generateTokenForSession } from "../auth/tokenService.js";
 import validator from "validator";
 import Family from "../models/family.js";
 import Association from "../models/association.js";
@@ -101,7 +101,7 @@ export const createUserController = {
   //! Fonction pour envoyer un email de confirmation
   async sendConfirmationEmail(user) {
     try {
-      const confirmationtoken = generateToken(user); // Générer un token pour la confirmation
+      const confirmationtoken = generateConfirmationToken(user); // Générer un token pour la confirmation
       const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // Expiration : 24h
   
       user.confirmationtoken = confirmationtoken;
