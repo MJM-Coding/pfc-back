@@ -14,7 +14,7 @@ export function verifyFamily() {
     try {
       const family = await Family.findOne({
         where: { id: familyId },
-        include: [{ model: User, as: "user" }], // Utilisation explicite de l'alias
+        include: [{ model: User, as: "user" }], 
       });
 
       if (!family) {

@@ -18,12 +18,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 //* Routes accessibles uniquement aux admin et aux associations
-familyRouter.get("/", verifyToken,isRoleAuthorizedMiddleware(["admin","association"]), withTryCatch(familyController.getAllFamilies)); // Route pour lister toutes les familles
+familyRouter.get("/", isRoleAuthorizedMiddleware(["admin","association"]), withTryCatch(familyController.getAllFamilies)); // Route pour lister toutes les familles
 familyRouter.get("/:id", verifyToken,isRoleAuthorizedMiddleware([ "family", "admin", "association"]), verifyFamily(), withTryCatch(familyController.getFamilyById)); // Route pour obtenir le détail d'une famille
 
 familyRouter.patch(
   "/:id",
-  verifyToken,
+  
   isRoleAuthorizedMiddleware(["admin", "family"]),
   verifyFamily(), // Vérifie que la famille est bien celle qui modifie
   upload.single("profile_photo"),
@@ -31,9 +31,9 @@ familyRouter.patch(
   withTryCatch(familyController.patchFamily)
 );
 
-familyRouter.delete("/:id",verifyToken, isRoleAuthorizedMiddleware(["family"]), verifyFamily(), withTryCatch(familyController.deleteFamily));
+familyRouter.delete("/:id", isRoleAuthorizedMiddleware(["family"]), verifyFamily(), withTryCatch(familyController.deleteFamily));
 
-familyRouter.get("/:id/animal",verifyToken,  isRoleAuthorizedMiddleware(["family"]), verifyFamily(), withTryCatch(animalController.getAllAnimals))
+familyRouter.get("/:id/animal",  isRoleAuthorizedMiddleware(["family"]), verifyFamily(), withTryCatch(animalController.getAllAnimals))
 
 // Route pour supprimer la photo de profil
-familyRouter.patch("/:id/delete-photo",verifyToken, withTryCatch(familyController.deleteProfilePhoto));
+familyRouter.patch("/:id/delete-photo", withTryCatch(familyController.deleteProfilePhoto));
