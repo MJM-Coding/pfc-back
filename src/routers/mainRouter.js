@@ -12,6 +12,7 @@ import { associationRouter } from "./associationRouter.js"; // router secondaire
 import { familyRouter } from "./familyRouter.js"; // router secondaire pour les routes liées aux familles d'accueil
 import { userRouter } from "./userRouter.js"; // router secondaire pour les routes liées aux utilisateurs
 import { createUserController } from "../controllers/createUserController.js";
+import { passwordResetRouter } from "./passwordResetRouter.js";
 
 import { validate } from "../validation/validate.js"; // Importation de la fonction de validation
 import { createSchema } from "../validation/allUser.js"; // Importation du schéma d'inscription JOI
@@ -26,9 +27,10 @@ const mainRouter = Router();
 //! Routeurs secondaires
 mainRouter.use("/association", associationRouter); // toutes les routes commencant par /association seront traitées par associationRouter
 mainRouter.use("/animal", animalRouter); // toutes les routes commencant par /animal seront traitées par animalRouter
-mainRouter.use("/ask", /*  verifyToken,  */ askRouter); // toutes les routes commencant par /ask seront traitées par askRouter
-mainRouter.use("/family", /* verifyToken,  */familyRouter); // toutes les routes commencant par /family seront traitées par familyRouter
+mainRouter.use("/ask",  verifyToken,  askRouter); // toutes les routes commencant par /ask seront traitées par askRouter
+mainRouter.use("/family", verifyToken, familyRouter); // toutes les routes commencant par /family seront traitées par familyRouter
 mainRouter.use("/user", userRouter);// toutes les routes commencant par /user seront traitées par userRouter
+
 
 //! Routes pour la connexion 
 mainRouter.post("/signin", withTryCatch(signinController.signinUser)); // Connexion
@@ -37,7 +39,12 @@ mainRouter.post("/signin", withTryCatch(signinController.signinUser)); // Connex
 mainRouter.post("/refresh-token", withTryCatch(signinController.refreshToken));
 
 //! Route pour confirmer l'email
-mainRouter.get("/confirm-email/:token", createUserController.confirmEmail);
+mainRouter.get("/confirm-email/:token", withTryCatch(createUserController.confirmEmail));
+
+//! Route pour traiter la demande de modification du mot de passe
+mainRouter.use("/password", passwordResetRouter);
+
+
 
 // *Middleware pour gérer les routes non trouvées
 mainRouter.use((req, res, next)=>{

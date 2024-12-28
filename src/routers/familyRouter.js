@@ -9,6 +9,7 @@ import { isRoleAuthorizedMiddleware } from "../middlewares/rightsMiddleware.js";
 import { validate } from "../validation/validate.js"; // Importation de la fonction de validation
 import { patchSchema } from "../validation/patchFamily.js"; // Importation du schéma de modification d'utilisateur JOI
 import { verifyFamily } from "../middlewares/verifyUser.js";
+import { verifyToken } from "../auth/verifyToken.js";
 
 export const familyRouter = Router();
 
@@ -17,19 +18,22 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 //* Routes accessibles uniquement aux admin et aux associations
-familyRouter.get("/",/*  isRoleAuthorizedMiddleware(["admin","association"]), */ withTryCatch(familyController.getAllFamilies)); // Route pour lister toutes les familles
-familyRouter.get("/:id", /* isRoleAuthorizedMiddleware(["admin", "association", "family"]), verifyFamily(), */ withTryCatch(familyController.getFamilyById)); // Route pour obtenir le détail d'une famille
+familyRouter.get("/", isRoleAuthorizedMiddleware(["admin","association"]), withTryCatch(familyController.getAllFamilies)); // Route pour lister toutes les familles
+familyRouter.get("/:id", verifyToken,isRoleAuthorizedMiddleware([ "family", "admin", "association"]), verifyFamily(), withTryCatch(familyController.getFamilyById)); // Route pour obtenir le détail d'une famille
 
 familyRouter.patch(
-    "/:id",
-    upload.single("profile_photo"), // Gère l'upload d'une seule image
-    validate(patchSchema, "body"),
-    withTryCatch(familyController.patchFamily)
-  );
+  "/:id",
   
-familyRouter.delete("/:id",/*  isRoleAuthorizedMiddleware(["family"]), verifyFamily(),  */withTryCatch(familyController.deleteFamily));
+  isRoleAuthorizedMiddleware(["admin", "family"]),
+  verifyFamily(), // Vérifie que la famille est bien celle qui modifie
+  upload.single("profile_photo"),
+  validate(patchSchema, "body"),
+  withTryCatch(familyController.patchFamily)
+);
 
-familyRouter.get("/:id/animal", /* isRoleAuthorizedMiddleware(["family"]), verifyFamily(), */ withTryCatch(animalController.getAllAnimals))
+familyRouter.delete("/:id", isRoleAuthorizedMiddleware(["family"]), verifyFamily(), withTryCatch(familyController.deleteFamily));
+
+familyRouter.get("/:id/animal",  isRoleAuthorizedMiddleware(["family"]), verifyFamily(), withTryCatch(animalController.getAllAnimals))
 
 // Route pour supprimer la photo de profil
 familyRouter.patch("/:id/delete-photo", withTryCatch(familyController.deleteProfilePhoto));

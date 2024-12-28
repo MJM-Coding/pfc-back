@@ -9,6 +9,7 @@ export const verifyToken = (req, res, next) => {
   // L'en-tête Authorization est de la forme "Bearer <token>"
   // On extrait uniquement le token après le mot "Bearer"
   const authHeader = req.headers["authorization"];
+  const sessionToken = req.headers["sessiontoken"];
   const token = authHeader && authHeader.split(" ")[1];
 
   // Si aucun token n'est présent dans l'en-tête, renvoie une erreur 401 "Unauthorized"
@@ -21,8 +22,12 @@ export const verifyToken = (req, res, next) => {
   jwt.verify(token, JWT_SECRET, (err, user) => {
     // Si le token est invalide ou expiré, renvoie une erreur 403 "Forbidden"
     if (err) {
+      console.error("Erreur lors de la vérification du token :", err.message);
       return res.status(403).json({ message: "Token invalide" });
+      
+     
     }
+
 
     // Si le token est valide, ajoute les informations de l'utilisateur décodées (payload du token) à `req.user`
     // Cela permet aux prochaines étapes de la requête d'accéder aux informations de l'utilisateur

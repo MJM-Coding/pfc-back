@@ -1,12 +1,12 @@
 import User from "../models/user.js";
 import { Op } from 'sequelize';
 import { Scrypt } from "../auth/Scrypt.js";
-import { generateToken, generateTokenForSession } from "../auth/tokenService.js";
+import { generateConfirmationToken, generateTokenForSession } from "../auth/tokenService.js";
 import validator from "validator";
 import Family from "../models/family.js";
 import Association from "../models/association.js";
 import { validatePassword } from "../validation/validatePassword.js";
-import transporter from "../config/nodemailer.js";
+import { sendEmail } from "../utils/mailer.js"; // fonction pour envoyer un email
 import HttpError from "../middlewares/httperror.js";
 import jwt from "jsonwebtoken";
 
@@ -101,7 +101,7 @@ export const createUserController = {
   //! Fonction pour envoyer un email de confirmation
   async sendConfirmationEmail(user) {
     try {
-      const confirmationtoken = generateToken(user); // Générer un token pour la confirmation
+      const confirmationtoken = generateConfirmationToken(user); // Générer un token pour la confirmation
       const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // Expiration : 24h
   
       user.confirmationtoken = confirmationtoken;
@@ -114,59 +114,52 @@ export const createUserController = {
       const confirmationUrl = `${process.env.FRONTEND_URL}/confirm-email/${confirmationtoken}`;
       console.log("URL de confirmation :", confirmationUrl);
   
-      // Envoyer l'email
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: user.email,
-        subject: "Confirmation de votre inscription",
-        html: `
-        <table width="100%" style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; background-color: #f9f9f9; padding: 20px; margin: 0;">
-          <tr>
-            <td align="center">
-              <table width="600" style="max-width: 600px; margin: auto; background-color: #07091E; color: #fff; border-radius: 8px; overflow: hidden; border-spacing: 0;">
-                <!-- Titre en haut -->
-                <tr>
-                  <td style="padding: 20px; text-align: center; background-color: #07091E; color: #fff;">
-                    <h1 style="margin: 0; font-size: 28px; color: #fff;">Bienvenue, ${user.firstname} !</h1>
-                  </td>
-                </tr>
-                <!-- Bannière avec image -->
-                <tr>
-                  <td style="padding: 0; text-align: center; background-color: #000;">
-                    <img src="https://res.cloudinary.com/depggx3rv/image/upload/v1733667774/confirmation%20mail/udrkziv5veomktffjtj3.png" 
-                         alt="Confirmation Mail"
-                          role="presentation"
-                         style="width: 100%; height: auto; display: block; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                  </td>
-                </tr>
-                <!-- Texte principal -->
-                <tr>
-                  <td style="padding: 20px; background-color: #07091E; color: #fff; text-align: center;">
-                    <p style="margin: 0 0 10px;">Merci de vous être inscrit sur notre site Pet Foster Connect.</p>
-                    <p style="margin: 0 0 20px;">Cliquez sur le lien suivant pour confirmer votre email :</p>
-                    <a href="${confirmationUrl}" 
-                       style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Confirmer mon email</a>
-                    <p style="margin-top: 20px; font-size: 12px; color: #aaa;">Ce lien expirera dans 24 heures.</p>
-                  </td>
-                </tr>
-
-            <!-- Message "Ne pas répondre" -->
-          <tr>
-            <td style="padding: 10px; background-color: #07091E; text-align: center; color: #aaa; font-size: 12px;">
-              <p style="margin: 0;">Veuillez ne pas répondre à cet email. Ce message est généré automatiquement.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-`,
-
-      
-      
-      
-      
-      });
+       // Envoyer l'email en utilisant `sendEmail`
+    await sendEmail(
+      user.email,
+      "Confirmation de votre inscription",
+      `
+      <table width="100%" style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; background-color: #f9f9f9; padding: 20px; margin: 0;">
+        <tr>
+          <td align="center">
+            <table width="600" style="max-width: 600px; margin: auto; background-color: #07091E; color: #fff; border-radius: 8px; overflow: hidden; border-spacing: 0;">
+              <!-- Titre en haut -->
+              <tr>
+                <td style="padding: 20px; text-align: center; background-color: #07091E; color: #fff;">
+                  <h1 style="margin: 0; font-size: 28px; color: #fff;">Bienvenue, ${user.firstname} !</h1>
+                </td>
+              </tr>
+              <!-- Bannière avec image -->
+              <tr>
+                <td style="padding: 0; text-align: center; background-color: #000;">
+                  <img src="https://res.cloudinary.com/depggx3rv/image/upload/v1733667774/confirmation%20mail/udrkziv5veomktffjtj3.png" 
+                      alt="Confirmation Mail"
+                      role="presentation"
+                      style="width: 100%; height: auto; display: block; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                </td>
+              </tr>
+              <!-- Texte principal -->
+              <tr>
+                <td style="padding: 20px; background-color: #07091E; color: #fff; text-align: center;">
+                  <p style="margin: 0 0 10px;">Merci de vous être inscrit sur notre site Pet Foster Connect.</p>
+                  <p style="margin: 0 0 20px;">Cliquez sur le lien suivant pour confirmer votre email :</p>
+                  <a href="${confirmationUrl}" 
+                      style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Confirmer mon email</a>
+                  <p style="margin-top: 20px; font-size: 12px; color: #aaa;">Ce lien expirera dans 24 heures.</p>
+                </td>
+              </tr>
+              <!-- Message "Ne pas répondre" -->
+              <tr>
+                <td style="padding: 10px; background-color: #07091E; text-align: center; color: #aaa; font-size: 12px;">
+                  <p style="margin: 0;">Veuillez ne pas répondre à cet email. Ce message est généré automatiquement.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      `
+    );
   
       console.log("Email envoyé avec succès.");
     } catch (error) {

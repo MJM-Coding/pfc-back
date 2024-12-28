@@ -10,7 +10,7 @@ if (!JWT_SECRET) {
 }
 
 //! Fonction pour générer un token JWT pour la confirmation d'email
-export const generateToken = (user) => {
+export const generateConfirmationToken = (user) => {
   console.log("Génération d'un token pour la confirmation d'email :", user);
 
   return jwt.sign(
