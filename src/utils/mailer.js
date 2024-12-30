@@ -3,12 +3,12 @@ import transporter from "../config/nodemailer.js";
 
 
 //! Fonction pour envoyer un email
-export const sendEmail = async (to, subject, text) => {
+export const sendEmail = async (to, subject, htmlContent) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Adresse de l'expéditeur (définie dans les variables d'environnement)
-    to, // Destinataire de l'email
-    subject, // Sujet de l'email
-    text, // Contenu texte de l'email
+    from: process.env.EMAIL_USER, // Adresse de l'expéditeur
+    to, // Destinataire
+    subject, // Sujet
+    html: htmlContent, // Contenu HTML
   };
 
   await transporter.sendMail(mailOptions);
