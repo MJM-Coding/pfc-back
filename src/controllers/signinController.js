@@ -11,26 +11,23 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET est requis.");
 }
 
+//! Méthode pour connecter un utilisateur
 export const signinController = {
-  //! Méthode pour connecter un utilisateur
-  async signinUser(req, res) {
-    let { email, password } = req.body;
-
-    // Nettoyage des entrées
-    email = email.trim();
-    password = password.trim();
-
-    // Vérification de la présence de l'email et du mot de passe
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email et mot de passe sont requis." });
-    }
-
-    // Vérification de la validité de l'email
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ message: "Email invalide." });
-    }
-
-    try {
+    async signinUser(req, res) {
+      let { email, password } = req.body;
+  
+      // Nettoyage et normalisation
+      email = email.trim().toLowerCase();
+      password = password.trim();
+  
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email et mot de passe sont requis." });
+      }
+  
+      if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: "Email invalide." });
+      }
+  
       // Rechercher l'utilisateur
       const user = await User.findOne({
         where: { email },
@@ -39,29 +36,36 @@ export const signinController = {
           { model: Association, as: "association", required: false },
         ],
       });
-
+  
       if (!user) {
         return res.status(401).json({ message: "Identifiants ou mot de passe incorrects." });
       }
-
-      // Vérification de la confirmation de l'email
-      if (!user.isverified) {
-        return res.status(403).json({
-          message: "Veuillez confirmer votre email avant de vous connecter.",
-        });
+  
+      //  Vérifier si l'utilisateur a dépassé le nombre de tentatives autorisées
+      if (user.failed_attempts >= 5) {
+        return res.status(403).json({ message: "Compte bloqué. Veuillez réinitialiser votre mot de passe." });
       }
-
-      // Vérification du mot de passe
+  
+      if (!user.isverified) {
+        return res.status(403).json({ message: "Veuillez confirmer votre email avant de vous connecter." });
+      }
+  
       const isValidPassword = await Scrypt.compare(password, user.password);
       if (!isValidPassword) {
+        // Incrémenter les tentatives de connexion en cas d'échec
+        user.failed_attempts += 1;
+        await user.save();
         return res.status(401).json({ message: "Identifiants ou mot de passe incorrects." });
       }
-
-      // Récupération des IDs associés
-      const id_family = user.family ? user.family.id : null;
-      const id_association = user.association ? user.association.id : null;
-
-      // Génération du token JWT pour la session
+  
+      // Réinitialiser les tentatives après une connexion réussie
+      user.failed_attempts = 0;
+      user.last_login = new Date();
+      await user.save();
+  
+      const id_family = user.family?.id || null;
+      const id_association = user.association?.id || null;
+  
       const token = generateTokenForSession({
         id: user.id,
         email: user.email,
@@ -69,16 +73,7 @@ export const signinController = {
         id_family,
         id_association,
       });
-
-      console.log("Utilisateur connecté :", {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        id_family,
-        id_association,
-      });
-
-      // Réponse au client
+  
       return res.status(200).json({
         message: "Connexion réussie.",
         token,
@@ -89,14 +84,11 @@ export const signinController = {
           id: user.id,
           id_family,
           id_association,
-          representative: user.association ? user.association.representative : null,
+          representative: user.association?.representative || null,
         },
       });
-    } catch (error) {
-      console.error("Erreur lors de la connexion :", error);
-      return res.status(500).json({ message: "Erreur serveur. Veuillez réessayer plus tard." });
-    }
-  },
+    },
+
 
   //! Méthode pour rafraîchir le token JWT
   async refreshToken(req, res) {
