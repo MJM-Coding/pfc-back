@@ -20,12 +20,11 @@ app.use(
     origin: process.env.CORS,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Méthodes autorisées
     allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
-    credentials: true, 
+    credentials: true, // Si tu utilises des cookies ou des sessions
   })
 );
 
-// Gestion explicite des pré-vérifications CORS
-app.options('*', cors());
+
 
 // Middleware pour traiter le JSON
 app.use(express.json({ limit: "100mb" }));
