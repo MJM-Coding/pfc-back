@@ -10,17 +10,13 @@
     {
       "src": "/api/(.*)",
       "dest": "/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.js"
     }
   ],
   "functions": {
-    "index": {
-      "maxRequestSize": "10mb" 
+    "maxDuration": 10,
+    "maxMemory": 1024,
+    "limits": {
+      "maxRequestSize": "10mb"
     }
-  },
-  "public": true,
-  "outputDirectory": "public"
+  }
 }
