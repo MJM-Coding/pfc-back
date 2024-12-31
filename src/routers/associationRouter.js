@@ -30,7 +30,9 @@ associationRouter.patch(
     verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(),
     validate(patchSchema, "body"),
     withTryCatch(associationController.patchAssociation) // Contrôleur pour traiter la mise à jour
-  );associationRouter.delete("/:id",verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(), withTryCatch(associationController.deleteAssociation));
+  );
+  
+associationRouter.delete("/:id",verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(), withTryCatch(associationController.deleteAssociation));
 
 associationRouter.get("/:id/animal",verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(), withTryCatch(animalController.getAllAnimals));
 associationRouter.get("/:associationId/animal/:animalId",verifyToken, isRoleAuthorizedMiddleware(["association"]), verifyAssociation(), withTryCatch(animalController.getAnimalById));
