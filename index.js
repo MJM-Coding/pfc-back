@@ -15,15 +15,31 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Configuration de CORS a retravailler avec option avant déploiement
+// Charge les origines autorisées
+const allowedOrigins = process.env.CORS
+  ? process.env.CORS.split(',')
+  : ['http://localhost:5173', 'https://pfc-front-eta.vercel.app']; // Valeurs par défaut
+
+// Middleware CORS
 app.use(
   cors({
-    origin: process.env.CORS,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // Autorise l'origine
+      } else {
+        console.error(`[CORS Debug] Origine non autorisée : ${origin}`);
+        console.log(`[CORS Debug] Variable CORS (env) : ${process.env.CORS}`);
+        console.log(`[CORS Debug] Liste des origines autorisées : ${allowedOrigins}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Méthodes autorisées
-    allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
-    credentials: true, // Si tu utilises des cookies ou des sessions
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Autorise les cookies ou les sessions
   })
 );
 
+app.options("*", cors()); // Gère les requêtes préliminaires
 
 
 // Middleware pour traiter le JSON
