@@ -17,7 +17,9 @@
     }
   ],
   "functions": {
-    "maxRequestSize": "10mb" 
+    "index": {
+      "maxRequestSize": "10mb" 
+    }
   },
   "public": true,
   "outputDirectory": "public"
