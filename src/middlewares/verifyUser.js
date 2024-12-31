@@ -45,26 +45,36 @@ export function verifyAssociation() {
     const associationId = req.params.id || req.params.associationId;
 
     if (!associationId) {
+      console.error("[verifyAssociation] ID d'association manquant");
       return res.status(400).json({ error: "ID d'association manquant dans la requête" });
     }
 
     try {
+      // Recherche de l'association avec l'utilisateur associé
       const association = await Association.findOne({
         where: { id: associationId },
-        include: [{ model: User, as :"user"}],
+        include: [{ model: User, as: "user" }],
       });
 
+      // Vérification si l'association existe
       if (!association) {
+        console.error("[verifyAssociation] Association non trouvée pour l'ID :", associationId);
         return res.status(404).json({ error: "Profil association non trouvé" });
       }
 
-      if (association.User.id !== req.user.id) {
+
+      // Vérification si l'utilisateur associé correspond à celui dans req.user
+      if (!association.user || association.user.id !== req.user.id) {
+        console.error(
+          "[verifyAssociation] Accès interdit : L'utilisateur associé ne correspond pas ou est manquant.",
+          { utilisateurDansRequete: req.user.id, utilisateurAssocie: association.user?.id }
+        );
         return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas habilité" });
       }
 
       next();
     } catch (error) {
-      console.error("Erreur dans verifyAssociation :", error);
+      console.error("[verifyAssociation] Erreur lors de la vérification :", error);
       res.status(500).json({ error: "Erreur interne du serveur" });
     }
   };
