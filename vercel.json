@@ -16,6 +16,13 @@
       "dest": "/index.js"
     }
   ],
+  "functions": {
+    "limits": {
+      "maxDuration": 10,
+      "maxMemory": 1024
+    },
+    "maxRequestSize": "10mb" 
+  },
   "public": true,
   "outputDirectory": "public"
 }
