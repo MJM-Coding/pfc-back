@@ -24,7 +24,8 @@ app.use(
   })
 );
 
-
+// Gestion explicite des pré-vérifications CORS
+app.options('*', cors());
 
 // Middleware pour traiter le JSON
 app.use(express.json({ limit: "100mb" }));
