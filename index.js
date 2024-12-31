@@ -18,6 +18,9 @@ const app = express();
 app.use(
   cors({
     origin: process.env.CORS,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Méthodes autorisées
+    allowedHeaders: ['Content-Type', 'Authorization'], // En-têtes autorisés
+    credentials: true, 
   })
 );
 
