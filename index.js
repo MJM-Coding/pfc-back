@@ -43,8 +43,8 @@ app.options("*", cors()); // Gère les requêtes préliminaires
 
 
 // Middleware pour traiter le JSON
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Middleware pour servir des fichiers statiques (CSS, images, etc.)
 app.use(express.static(path.join(__dirname, "public")));
