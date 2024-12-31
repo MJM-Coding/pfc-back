@@ -49,6 +49,16 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 // Middleware pour servir des fichiers statiques (CSS, images, etc.)
 app.use(express.static(path.join(__dirname, "public")));
 
+// Gestion des erreurs "Payload Too Large"
+app.use((err, req, res, next) => {
+  if (err.status === 413) {
+    return res.status(413).send({
+      error: "Payload Too Large",
+      message: "Le fichier envoyé dépasse la taille maximale autorisée.",
+    });
+  }
+  next(err);
+});
 
 // Utilisation du routeur principal
 app.use("/api", mainRouter);
