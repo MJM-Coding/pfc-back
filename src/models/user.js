@@ -8,14 +8,14 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            notEmpty: {msg: "Le Nom est obligatoire"},
+            notEmpty: { msg: "Le Nom est obligatoire" },
         },
     },
     lastname: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            notEmpty: {msg: "Le Prénom est obligatoire"},
+            notEmpty: { msg: "Le Prénom est obligatoire" },
         },
     },
     email: {
@@ -23,14 +23,14 @@ User.init({
         allowNull: false,
         validate: {
             isEmail: { msg: "L'email n'est pas au bon format" },
-            notEmpty: {msg: "L'email est obligatoire"},
+            notEmpty: { msg: "L'email est obligatoire" },
         },
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            notEmpty: {msg: "Le Mot de Passe est obligatoire"},
+            notEmpty: { msg: "Le Mot de Passe est obligatoire" },
         },
     },
     role: {
@@ -39,23 +39,32 @@ User.init({
     confirmationtoken: {
         type: DataTypes.STRING,
         allowNull: true,
-         field: 'confirmationtoken'
-      },
-
-      tokenexpiration: {
+        field: 'confirmationtoken'
+    },
+    tokenexpiration: {
         type: DataTypes.DATE,
         allowNull: true,
         field: 'tokenexpiration'
-      },
-
+    },
     isverified: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
-        field: 'isverified' 
-      },
-},
-{
+        field: 'isverified'
+    },
+    failed_attempts: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0, // Par défaut, aucune tentative échouée
+        validate: {
+            isInt: { msg: "failed_attempts doit être un entier" },
+        },
+    },
+    blocked_until: {
+        type: DataTypes.DATE,
+        allowNull: true, // Null si l'utilisateur n'est pas bloqué
+    },
+}, {
     sequelize: sequelize,
     tableName: "user",
-})
+});
