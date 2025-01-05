@@ -18,7 +18,7 @@ const app = express();
 // Charge les origines autorisées
 const allowedOrigins = process.env.CORS
   ? process.env.CORS.split(',')
-  : ['http://localhost:5173', 'https://pfc-front-eta.vercel.app']; // Valeurs par défaut
+  : ['http://localhost:5173', 'https://pfc-front-eta.vercel.app', 'https://siva-integ1.cegedim.cloud' ]; // api externe
 
 // Middleware CORS
 app.use(

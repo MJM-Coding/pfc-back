@@ -17,6 +17,7 @@ import { passwordResetRouter } from "./passwordResetRouter.js";
 import { validate } from "../validation/validate.js"; // Importation de la fonction de validation
 import { createSchema } from "../validation/allUser.js"; // Importation du schéma d'inscription JOI
 
+import { validateRNA } from "../controllers/rnaValidationController.js";
 
 import { signinController } from "../controllers/signinController.js"; // Importation du Controller signinController pour la connexion
 
@@ -44,6 +45,8 @@ mainRouter.get("/confirm-email/:token", withTryCatch(createUserController.confir
 //! Route pour traiter la demande de modification du mot de passe
 mainRouter.use("/password", passwordResetRouter);
 
+//! Route pour traiter la demande de validation du RNA
+mainRouter.get('/validate-rna/:rnaNumber', withTryCatch(validateRNA));
 
 
 // *Middleware pour gérer les routes non trouvées
