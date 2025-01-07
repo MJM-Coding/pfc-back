@@ -259,7 +259,7 @@ export const createUserController = {
     } catch (error) {
       console.error("Erreur lors de la vérification du token :", error);
       if (error.name === "TokenExpiredError") {
-        return res.status(400).json({ message: "Le jeton a expiré." });
+        return res.status(401).json({ message: "Le jeton a expiré." });
       }
       return res.status(400).json({ message: "Jeton invalide." });
     }
