@@ -16,7 +16,7 @@ export const generateConfirmationToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role }, // Payload : contient les informations utilisateur
     JWT_SECRET, // Clé secrète utilisée pour signer le token
-    { expiresIn: "1m" } // Le token pour la confirmation d'email expire dans 24 heures
+    { expiresIn: "24h" } // Le token pour la confirmation d'email expire dans 24 heures
   );
 };
 
