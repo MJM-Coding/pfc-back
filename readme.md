@@ -16,4 +16,8 @@ docker compose -f Docker-compose.dev.yml up --build
 
 
 
-
+RNA VALIDE
+W133012934
+W131000319
+W521001033
+W212008567
