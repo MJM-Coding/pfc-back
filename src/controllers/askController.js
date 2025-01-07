@@ -156,15 +156,12 @@ deleteAsk: async (req, res) => {
       where: { id_user: req.user.id },
     });
 
-    console.log("Family trouvé :", family);
 
     // Vérifie si l'utilisateur est une association
     const association = await Association.findOne({
       where: { id_user: req.user.id },
     });
 
-    console.log("Association trouvée :", association);
-    console.log("ID association de la demande (via animal) :", ask.animal.id_association);
 
     // Vérifie les autorisations
     if (

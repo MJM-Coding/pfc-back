@@ -184,11 +184,9 @@ export const createUserController = {
       user.tokenexpiration = expirationDate;
       await user.save();
 
-      console.log("Token sauvegardé :", user.confirmationtoken);
 
       // Générer l'URL de confirmation
       const confirmationUrl = `${process.env.FRONTEND_URL}/confirm-email/${confirmationtoken}`;
-      console.log("URL de confirmation :", confirmationUrl);
 
       // Envoyer l'email en utilisant `sendEmail`
       await sendEmail(
@@ -237,7 +235,6 @@ export const createUserController = {
         `
       );
 
-      console.log("Email envoyé avec succès.");
     } catch (error) {
       console.error(
         "Erreur lors de l'envoi de l'email de confirmation :",
@@ -250,8 +247,6 @@ export const createUserController = {
   async confirmEmail(req, res) {
     const { token } = req.params;
 
-    console.log("Token reçu :", token);
-
     // Décoder le token JWT
     let decoded;
     try {
@@ -263,8 +258,6 @@ export const createUserController = {
       }
       return res.status(400).json({ message: "Jeton invalide." });
     }
-
-    console.log("Payload décodé :", decoded);
 
     // Rechercher l'utilisateur
     const user = await User.findOne({
@@ -281,7 +274,6 @@ export const createUserController = {
       return res.status(400).json({ message: "Jeton invalide ou expiré." });
     }
 
-    console.log("Avant confirmation :", user.toJSON());
 
     // Mettre à jour l'utilisateur
     user.isverified = true;
@@ -289,8 +281,6 @@ export const createUserController = {
     user.tokenexpiration = null;
 
     await user.save();
-
-    console.log("Après confirmation :", user.toJSON());
 
     // Générer un token de session après confirmation
     const sessionToken = generateTokenForSession(user);

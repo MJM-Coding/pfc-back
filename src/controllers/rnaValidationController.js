@@ -18,7 +18,6 @@ import axios from "axios";
 
 export const validateRNA = async (req, res) => {
   const { rnaNumber } = req.params;
-  console.log("Numéro RNA reçu :", rnaNumber);
 
   if (!rnaNumber || typeof rnaNumber !== "string") {
     return res.status(400).json({
@@ -28,12 +27,10 @@ export const validateRNA = async (req, res) => {
   }
 
   const apiUrl = `${process.env.API_ASSO_URL}/structure/${rnaNumber}`;
-  console.log("URL appelée :", apiUrl);
 
   try {
     // Appel à l'API externe
     const response = await axios.get(apiUrl);
-    console.log("Réponse de l'API :", response.data);
 
     // Vérifier si la réponse contient une erreur
     if (response.data?.erreur || response.data?.data?.erreur) {

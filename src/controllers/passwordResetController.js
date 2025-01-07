@@ -50,9 +50,6 @@ export const passwordResetController = {
   async resetPassword(req, res) {
     const { token, newPassword } = req.body;
 
-    console.log("Token reçu :", token);
-    console.log("Nouveau mot de passe :", newPassword);
-
     // Décoder le token
     const decoded = jwt.verify(token, JWT_SECRET);
 

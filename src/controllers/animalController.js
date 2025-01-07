@@ -42,7 +42,6 @@ export const animalController = {
       order: [["id", "ASC"]], // Tri par ID croissant
     });
     
-    console.log("Animaux triés avec demandes filtrées :", JSON.stringify(animals, null, 2));
     res.status(200).json(animals);
     
   },
@@ -119,7 +118,6 @@ export const animalController = {
   //! Supprimer une photo d'un animal
   deleteAnimalPhoto: async (req, res) => {
     const { id: animalId, photoType } = req.params;
-    console.log("req.user:", req.user); // Loguer l'objet utilisateur
     if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Utilisateur non authentifié" });
     }
@@ -157,7 +155,6 @@ export const animalController = {
       const localFilePath = path.join(process.cwd(), "public", photoPath);
       try {
         await fs.unlink(localFilePath);
-        console.log(`Fichier local supprimé : ${localFilePath}`);
       } catch (err) {
         console.warn(
           `Erreur lors de la suppression du fichier local : ${err.message}`
@@ -167,7 +164,6 @@ export const animalController = {
       const publicId = photoPath.split("/").pop().split(".")[0];
       try {
         await cloudinary.v2.uploader.destroy(publicId);
-        console.log(`Image Cloudinary supprimée : ${publicId}`);
       } catch (err) {
         console.warn(
           `Erreur lors de la suppression sur Cloudinary : ${err.message}`
@@ -208,7 +204,6 @@ export const animalController = {
           );
           try {
             await fs.unlink(localFilePath);
-            console.log(`Fichier local supprimé : ${localFilePath}`);
           } catch (err) {
             console.warn(
               `Erreur lors de la suppression du fichier local : ${err.message}`
@@ -218,7 +213,6 @@ export const animalController = {
           const publicId = currentProfilePhoto.split("/").pop().split(".")[0];
           try {
             await cloudinary.v2.uploader.destroy(publicId);
-            console.log(`Image Cloudinary supprimée : ${publicId}`);
           } catch (err) {
             console.warn(
               `Erreur lors de la suppression sur Cloudinary : ${err.message}`

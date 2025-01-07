@@ -11,7 +11,6 @@ if (!JWT_SECRET) {
 
 //! Fonction pour générer un token JWT pour la confirmation d'email
 export const generateConfirmationToken = (user) => {
-  console.log("Génération d'un token pour la confirmation d'email :", user);
 
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role }, // Payload : contient les informations utilisateur
@@ -22,7 +21,6 @@ export const generateConfirmationToken = (user) => {
 
 //! Fonction pour générer un token JWT pour une session utilisateur
 export const generateTokenForSession = (user) => {
-  console.log("Génération d'un token pour une session utilisateur :", user);
 
   // Ajoutez une vérification pour vous assurer que toutes les informations nécessaires sont présentes
   if (!user.id_family && !user.id_association) {

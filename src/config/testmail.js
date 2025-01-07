@@ -11,7 +11,6 @@ async function sendTestEmail() {
       text: "Ceci est un test d'envoi d'email via Gmail.", // Contenu
     });
 
-    console.log("Email envoyé avec succès :", info.messageId);
   } catch (error) {
     console.error("Erreur lors de l’envoi de l’email :", error);
   }

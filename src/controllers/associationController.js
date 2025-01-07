@@ -52,7 +52,6 @@ export const associationController = {
             .pop()
             .split(".")[0]; // Extraire le public ID
           await cloudinary.v2.uploader.destroy(publicId);
-          console.log(`Image Cloudinary supprimée : ${publicId}`);
         } catch (err) {
           console.error(
             "Erreur lors de la suppression sur Cloudinary :",
@@ -93,7 +92,6 @@ export const associationController = {
       status,
     } = req.body;
 
-    console.log("Données reçues du formulaire : ", req.body);
 
     const updateAssociation = req.body;
     const association = await Association.findByPk(associationId, {
@@ -102,16 +100,13 @@ export const associationController = {
     });
 
     if (!association) {
-      console.log("Association non trouvée");
       throw new HttpError(404, "Association not found");
     }
 
     const transaction = await sequelize.transaction();
-    console.log("Transaction commencée");
 
     try {
       const user = await association.getUser();
-      console.log("Utilisateur trouvé :", user);
 
       // Mise à jour des informations utilisateur
       const userData = {
@@ -119,7 +114,6 @@ export const associationController = {
         lastname: lastname || user.lastname,
         email: email || user.email,
       };
-      console.log("Contenu de req.body : ", req.body);
 
       //! Gestion du changement de mot de passe
       if (
@@ -147,7 +141,6 @@ export const associationController = {
         }
 
         if (!validatePassword(req.body.newPassword)) {
-          console.log("Mise à jour du mot de passe...");
           await transaction.rollback();
           return res.status(400).json({
             message:
@@ -174,7 +167,6 @@ export const associationController = {
             );
             try {
               await fs.unlink(localFilePath);
-              console.log(`Fichier local supprimé : ${localFilePath}`);
             } catch (err) {
               console.warn(
                 `Erreur lors de la suppression du fichier local : ${err.message}`
@@ -187,7 +179,6 @@ export const associationController = {
               .split(".")[0];
             try {
               await cloudinary.v2.uploader.destroy(publicId);
-              console.log(`Image Cloudinary supprimée : ${publicId}`);
             } catch (err) {
               console.warn(
                 `Erreur lors de la suppression sur Cloudinary : ${err.message}`
@@ -202,9 +193,6 @@ export const associationController = {
         // Mettre à jour le champ `profile_photo` et sauvegarder
         association.profile_photo = uploadResult;
         await association.save({ transaction });
-        console.log(
-          `Photo de profil mise à jour dans la BDD : ${uploadResult}`
-        );
       }
 
       // Mettre à jour les autres champs de l'association
@@ -218,11 +206,9 @@ export const associationController = {
       association.status = status || association.status;
 
       await association.save({ transaction });
-      console.log("Données de l'association mises à jour");
 
       // Recharger l'utilisateur pour inclure les mises à jour
       const updatedUser = await user.reload({ transaction });
-      console.log("Utilisateur rechargé avec les mises à jour:", updatedUser);
 
       // Recharger l'association pour inclure les relations mises à jour
       await association.reload({
@@ -235,7 +221,6 @@ export const associationController = {
 
       // Commit de la transaction
       await transaction.commit();
-      console.log("Transaction commitée avec succès");
 
       // Associer l'utilisateur rechargé manuellement à l'association
       association.user = updatedUser;

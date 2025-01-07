@@ -1,7 +1,6 @@
 //! Middleware combiné pour vérifier les rôles autorisés
 function isRoleAuthorizedMiddleware(roles = []) {
   return (req, res, next) => {
-    console.log("Role utilisateur : ", req.user.role);
 
     // Vérifie si l'utilisateur est connecté et si son rôle est dans la liste des rôles autorisés
     if (!req.user || !roles.includes(req.user.role)) {

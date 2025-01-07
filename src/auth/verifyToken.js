@@ -39,7 +39,6 @@ export const verifyToken = (req, res, next) => {
       id_association: user.id_association,
     };
 
-    console.log("Utilisateur ajouté à req.user :", req.user);
     next();
   });
 };

@@ -6,18 +6,6 @@ docker compose -f Docker-compose.dev.yml build --no-cache ; \
 docker compose -f Docker-compose.dev.yml up --build
 
 
-| Fonction/Rôle         | validateRNA (Route API)                           | validateRNAFromApi (Utils interne)               |
-|-----------------------|--------------------------------------------------|--------------------------------------------------|
-| **Exposé au front**   | Oui, via `/validate-rna/:rnaNumber`.             | Non, utilisée uniquement dans le backend.       |
-| **Quand est-elle appelée ?** | Quand le front veut vérifier un RNA.            | Lors de la création d'un utilisateur.           |
-| **Retourne**          | Une réponse JSON pour le front.                 | Un objet utilisable dans les contrôleurs.       |
-| **Objectif**          | Aider le front à afficher des messages utilisateur. | Vérifier le RNA avant d'insérer en BDD.         |
 
 
-
-
-RNA VALIDE
-W133012934
-W131000319
-W521001033
-W212008567
+R

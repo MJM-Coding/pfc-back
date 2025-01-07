@@ -5,8 +5,6 @@ export function verifyFamily() {
   return async function (req, res, next) {
     const familyId = req.params.id || req.params.familyId;
 
-    console.log("verifyFamily - ID Famille reçu :", familyId);
-
     if (!familyId) {
       return res.status(400).json({ error: "ID de famille manquant dans la requête" });
     }
@@ -22,14 +20,10 @@ export function verifyFamily() {
         return res.status(404).json({ error: "Profil famille non trouvé" });
       }
 
-      console.log("verifyFamily - Famille trouvée :", family);
-
       if (!family.user || family.user.id !== req.user.id) {
         console.error("verifyFamily - ID utilisateur ne correspond pas ou utilisateur manquant");
         return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas habilité" });
       }
-
-      console.log("verifyFamily - ID utilisateur lié à la famille :", family.user.id);
 
       next();
     } catch (error) {
@@ -43,8 +37,6 @@ export function verifyFamily() {
 export function verifyAssociation() {
   return async function (req, res, next) {
     const associationId = req.params.id || req.params.associationId;
-
-    console.log("[verifyAssociation] ID d'association reçu :", associationId);
 
     if (!associationId) {
       console.error("[verifyAssociation] ID d'association manquant");
@@ -64,8 +56,6 @@ export function verifyAssociation() {
         return res.status(404).json({ error: "Profil association non trouvé" });
       }
 
-      console.log("[verifyAssociation] Association trouvée :", association);
-      console.log("[verifyAssociation] Utilisateur associé :", association.user);
 
       // Vérification si l'utilisateur associé correspond à celui dans req.user
       if (!association.user || association.user.id !== req.user.id) {
@@ -75,9 +65,6 @@ export function verifyAssociation() {
         );
         return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas habilité" });
       }
-
-      // Log succès avant de passer au middleware suivant
-      console.log("[verifyAssociation] Vérification réussie pour l'utilisateur :", req.user.id);
 
       next();
     } catch (error) {

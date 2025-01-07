@@ -28,8 +28,6 @@ app.use(
         callback(null, true); // Autorise l'origine
       } else {
         console.error(`[CORS Debug] Origine non autorisée : ${origin}`);
-        console.log(`[CORS Debug] Variable CORS (env) : ${process.env.CORS}`);
-        console.log(`[CORS Debug] Liste des origines autorisées : ${allowedOrigins}`);
         callback(new Error('Not allowed by CORS'));
       }
     },

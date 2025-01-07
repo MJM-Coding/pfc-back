@@ -55,7 +55,6 @@ deleteProfilePhoto: async (req, res) => {
       try {
         const publicId = family.profile_photo.split('/').pop().split('.')[0]; // Extraire le public ID
         await cloudinary.v2.uploader.destroy(publicId);
-        console.log(`Image Cloudinary supprimée : ${publicId}`);
       } catch (err) {
         console.error("Erreur lors de la suppression sur Cloudinary :", err.message);
         return res.status(500).json({ message: "Erreur lors de la suppression sur Cloudinary." });
@@ -90,7 +89,6 @@ deleteProfilePhoto: async (req, res) => {
       number_of_children,
     } = req.body;
   
-    console.log("Données reçues du formulaire : ", req.body);
   
     const family = await Family.findByPk(familyId, {
       attributes: { exclude: "password" },
@@ -98,16 +96,12 @@ deleteProfilePhoto: async (req, res) => {
     });
   
     if (!family) {
-      console.log("Famille d'accueil non trouvée");
       return next(new HttpError(404, "Famille d'accueil non trouvée"));
     }
   
-    const transaction = await sequelize.transaction();
-    console.log("Transaction commencée");
-  
+    const transaction = await sequelize.transaction();  
     try {
       const user = await family.getUser();
-      console.log("Utilisateur trouvé :", user);
   
       // Mise à jour des informations utilisateur
       const userData = {
@@ -154,7 +148,6 @@ deleteProfilePhoto: async (req, res) => {
   
       // Mise à jour de l'utilisateur
       await user.update(userData, { transaction });
-      console.log("Utilisateur mis à jour dans la base de données");
   
       //! Gestion de l'image de profil avec Multer et Cloudinary
       if (req.file) {
@@ -167,7 +160,6 @@ deleteProfilePhoto: async (req, res) => {
             );
             try {
               await fs.unlink(localFilePath);
-              console.log(`Fichier local supprimé : ${localFilePath}`);
             } catch (err) {
               console.warn(
                 `Erreur lors de la suppression du fichier local : ${err.message}`
@@ -180,7 +172,6 @@ deleteProfilePhoto: async (req, res) => {
               .split(".")[0];
             try {
               await cloudinary.v2.uploader.destroy(publicId);
-              console.log(`Image Cloudinary supprimée : ${publicId}`);
             } catch (err) {
               console.warn(
                 `Erreur lors de la suppression sur Cloudinary : ${err.message}`
@@ -195,9 +186,6 @@ deleteProfilePhoto: async (req, res) => {
         // Mettre à jour le champ `profile_photo` et sauvegarder
         family.profile_photo = uploadResult;
         await family.save({ transaction });
-        console.log(
-          `Photo de profil mise à jour dans la BDD : ${uploadResult}`
-        );
       }
   
       // Mise à jour des autres champs de la famille
@@ -213,11 +201,9 @@ deleteProfilePhoto: async (req, res) => {
         number_of_children || family.number_of_children;
   
       await family.save({ transaction });
-      console.log("Données de la famille mises à jour");
   
       // Recharger l'utilisateur pour inclure les mises à jour
       const updatedUser = await user.reload({ transaction });
-      console.log("Utilisateur rechargé avec les mises à jour:", updatedUser);
   
       //Recharger la famille pour inclure les relations mises à jour
       await family.reload({
@@ -225,14 +211,9 @@ deleteProfilePhoto: async (req, res) => {
           { association: "user" }, // Inclut les mises à jour de l'utilisateur
         ],
       });
-      console.log(
-        "Famille rechargée avec les relations mises à jour:",
-        family
-      );
   
       // Commit de la transaction
       await transaction.commit();
-      console.log("Transaction commitée avec succès");
   
       // Associer l'utilisateur rechargé manuellement à la famille**
       family.user = updatedUser;
