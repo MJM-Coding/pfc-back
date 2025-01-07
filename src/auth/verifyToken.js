@@ -6,8 +6,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 //! Middleware de vérification du token JWT
 export const verifyToken = (req, res, next) => {
   // Récupérer le token de l'en-tête Authorization
-  // L'en-tête Authorization est de la forme "Bearer <token>"
-  // On extrait uniquement le token après le mot "Bearer"
   const authHeader = req.headers["authorization"];
   const sessionToken = req.headers["sessiontoken"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -18,26 +16,29 @@ export const verifyToken = (req, res, next) => {
   }
 
   //! Vérifie et décode le token
-  // jwt.verify décode le token et s'assure qu'il est valide en utilisant la clé secrète JWT_SECRET
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    // Si le token est invalide ou expiré, renvoie une erreur 403 "Forbidden"
+    // Gestion des erreurs lors de la vérification du token
     if (err) {
       console.error("Erreur lors de la vérification du token :", err.message);
-      return res.status(403).json({ message: "Token invalide" });
       
-     
+      // Si le token est expiré, renvoyer un statut 401 avec un message explicite
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expiré" });
+      }
+
+      // Pour toute autre erreur de vérification, renvoyer un statut 403 "Forbidden"
+      return res.status(403).json({ message: "Token invalide" });
     }
 
-
-    // Si le token est valide, ajoute les informations de l'utilisateur décodées (payload du token) à `req.user`
-    // Cela permet aux prochaines étapes de la requête d'accéder aux informations de l'utilisateur
+    // Si le token est valide, ajoute les informations de l'utilisateur décodées à `req.user`
     req.user = {
       id: user.id,
       email: user.email,
       role: user.role,
-      id_family:  user.id_family,
-      id_association:  user.id_association,
+      id_family: user.id_family,
+      id_association: user.id_association,
     };
+
     console.log("Utilisateur ajouté à req.user :", req.user);
     next();
   });
