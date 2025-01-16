@@ -99,5 +99,29 @@ export function verifyUser() {
       console.error("Erreur dans verifyUser :", error);
       res.status(500).json({ error: "Erreur interne du serveur" });
     }
+    
+  };
+
+}
+
+//! Middleware de vérification de l'administrateur
+export function verifyAdmin() {
+  return async function (req, res, next) {
+    try {
+      const user = await User.findByPk(req.user.id);
+
+      if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+
+      if (user.role !== "admin") {
+        return res.status(403).json({ error: "Accès interdit : Vous n'êtes pas un administrateur." });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Erreur dans verifyAdmin :", error);
+      res.status(500).json({ error: "Erreur interne du serveur" });
+    }
   };
 }

@@ -21,18 +21,16 @@ export const generateConfirmationToken = (user) => {
 
 //! Fonction pour générer un token JWT pour une session utilisateur
 export const generateTokenForSession = (user) => {
-
-  // Ajoutez une vérification pour vous assurer que toutes les informations nécessaires sont présentes
-  if (!user.id_family && !user.id_association) {
-    console.warn(
-      "Attention : L'utilisateur n'a pas de 'id_family' ou 'id_association'. Vérifiez les données utilisateur.",
-      user
-    );
-  }
-
   return jwt.sign(
-    { id: user.id, email: user.email, role: user.role, id_family: user.id_family, id_association: user.id_association }, // Payload : contient les informations utilisateur nécessaires à la session
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      id_family: user.id_family || null,
+      id_association: user.id_association || null,
+    },
     JWT_SECRET, // Clé secrète utilisée pour signer le token
-    { expiresIn: "1h" } // Le token de session expire après 1 heure
+    { expiresIn: "1h" } // Durée de validité du token
   );
 };
+

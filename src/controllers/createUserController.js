@@ -178,10 +178,9 @@ export const createUserController = {
   async sendConfirmationEmail(user) {
     try {
       const confirmationtoken = generateConfirmationToken(user); // Générer un token pour la confirmation
-      const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // Expiration : 24h
 
       user.confirmationtoken = confirmationtoken;
-      user.tokenexpiration = expirationDate;
+     
       await user.save();
 
 
@@ -265,7 +264,6 @@ export const createUserController = {
         id: decoded.id,
         email: decoded.email,
         confirmationtoken: token,
-        tokenexpiration: { [Op.gt]: new Date() },
       },
     });
 
