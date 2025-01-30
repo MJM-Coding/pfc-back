@@ -64,6 +64,13 @@ User.init({
         type: DataTypes.DATE,
         allowNull: true, // Null si l'utilisateur n'est pas bloqué
     },
+
+    rgpd_consent: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+
 }, {
     sequelize: sequelize,
     tableName: "user",

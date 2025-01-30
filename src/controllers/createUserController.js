@@ -27,13 +27,18 @@ export const createUserController = {
       const familyData = req.body.family; // Données spécifiques aux familles d'accueil
       const associationData = req.body.association; // Données spécifiques aux associations
 
-      //! Vérification de l'email
+       //! ✅ Vérification du consentement RGPD
+       if (!user.rgpd_consent) {
+        return res.status(400).json({ message: "Vous devez accepter la politique de confidentialité pour vous inscrire." });
+      }
+
+      //!  ✅ Vérification de l'email
       // On s'assure que l'email est valide au format standard
       if (!validator.isEmail(user.email)) {
         return res.status(400).json({ message: "Email invalide" });
       }
 
-      //! Vérification du mot de passe
+      //!  ✅ Vérification du mot de passe
       // On s'assure que le mot de passe respecte les critères définis
       if (!validatePassword(user.password)) {
         return res.status(400).json({
@@ -42,14 +47,14 @@ export const createUserController = {
         });
       }
 
-      //! Vérification de l'existence de l'utilisateur
+      //!  ✅ Vérification de l'existence de l'utilisateur
       // On vérifie si un utilisateur avec cet email existe déjà dans la base de données
       const existingUser = await User.findOne({ where: { email: user.email } });
       if (existingUser) {
         return res.status(400).json({ message: "L'email est déjà utilisé" });
       }
 
-      //! Vérification de l'existence du numéro RNA
+      //!  ✅ Vérification de l'existence du numéro RNA
       if (associationData?.rna_number) {
         // On vérifie si un numéro RNA existe déjà dans la table `Association`
         const existingAssociation = await Association.findOne({
@@ -95,6 +100,7 @@ export const createUserController = {
             email: user.email,
             password: hashedPassword,
             role: user.role,
+            rgpd_consent: true, // Stocke le consentement RGPD
           },
           { transaction } // La transaction garantit que tout est cohérent
         );

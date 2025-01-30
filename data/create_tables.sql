@@ -19,10 +19,12 @@ CREATE TABLE "user" (
   isverified          BOOLEAN DEFAULT FALSE, -- Email vérifié (false par défaut)
   failed_attempts     INTEGER DEFAULT 0 NOT NULL, -- Tentatives échouées
   blocked_until       TIMESTAMP, -- Date jusqu'à laquelle l'utilisateur est bloqué
+  rgpd_consent        BOOLEAN DEFAULT FALSE NOT NULL, -- Consentement RGPD obligatoire
   created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   role                VARCHAR(50) CHECK (role IN ('family', 'association', 'admin')) NOT NULL
 );
+
 
 
 

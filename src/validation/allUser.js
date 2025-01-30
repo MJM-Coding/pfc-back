@@ -5,6 +5,12 @@ export const createSchema = Joi.object({
     lastname: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
+    rgpd_consent: Joi.boolean().valid(true).required()
+     .messages({
+         "any.only": "Vous devez accepter la politique de confidentialité.",
+         "any.required": "Le consentement à la politique de confidentialité est obligatoire."
+     }),
+
     family: Joi.object({
         address: Joi.string().required(),
         postal_code: Joi.string().max(5).required(),
@@ -18,6 +24,7 @@ export const createSchema = Joi.object({
         garden: Joi.boolean(),
         description: Joi.string().allow(''),
         profile_photo: Joi.string()
+   
     }),
     association: Joi.object({
         rna_number: Joi.string().pattern(/^W\d{9}$/).required(),
