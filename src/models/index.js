@@ -4,6 +4,8 @@ import Family from "./family.js";
 import Association from "./association.js";
 import Animal from "./animal.js";
 import Ask from "./ask.js";
+import Conversation from "./conversation.js";
+import Message from "./message.js";
 
 //! Une famille peut avoir plusieurs animaux
 Family.hasMany(Animal, {
@@ -78,4 +80,50 @@ Ask.belongsTo(Animal, {
   as: "animal", // alias pour la relation
 });
 
-export { client, User, Family, Association, Animal, Ask };
+//! Une conversation appartient à une famille et une association
+Conversation.belongsTo(Family, { 
+  foreignKey: "id_family",
+  as: "family",
+  unique: "unique_conversation" // Contrainte d'unicité sur id_family + id_association
+});
+  
+Conversation.belongsTo(Association, { 
+  foreignKey: "id_association", 
+  as: "association",
+  unique: "unique_conversation"
+});
+
+//! Une conversation a plusieurs messages
+Conversation.hasMany(Message, {
+  foreignKey: "id_conversation",
+  as: "messages", // Alias pour les messages d'une conversation
+  onDelete: "CASCADE",
+});
+
+Message.belongsTo(Conversation, { 
+  foreignKey: "id_conversation",
+  as: "conversation" // Alias pour la conversation d'un message
+});
+
+//! Un message est envoyé par un utilisateur
+Message.belongsTo(User, { 
+  foreignKey: "id_sender", 
+  as: "sender" // Alias pour l'expéditeur du message
+});
+
+User.hasMany(Message, { 
+  foreignKey: "id_sender",
+  as: "sentMessages" // Alias pour les messages envoyés par l'utilisateur
+});
+
+
+export {
+  client,
+  User,
+  Family,
+  Association,
+  Animal,
+  Ask,
+  Conversation,
+  Message,
+};

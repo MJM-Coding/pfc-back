@@ -92,7 +92,9 @@ export const signinController = {
       id_family,
       id_association,
     });
-
+ // Affiche le contenu du token dans les logs
+ console.log("Token généré : ", token);
+ 
     return res.status(200).json({
       message: "Connexion réussie.",
       token,

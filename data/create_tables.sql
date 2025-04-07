@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS family;
 DROP TABLE IF EXISTS association;
 DROP TABLE IF EXISTS animal;
 DROP TABLE IF EXISTS ask;
+DROP TABLE IF EXISTS conversation; 
+DROP TABLE IF EXISTS message; 
 
 -- Création de la table des utilisateurs
 CREATE TABLE "user" (
@@ -24,8 +26,6 @@ CREATE TABLE "user" (
   updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   role                VARCHAR(50) CHECK (role IN ('family', 'association', 'admin')) NOT NULL
 );
-
-
 
 
 -- Création de la table des familles
@@ -94,6 +94,47 @@ CREATE TABLE ask (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Gère les échanges entre familles et associations
+CREATE TABLE conversation (
+  id SERIAL PRIMARY KEY,
+  id_family INT REFERENCES family(id) ON DELETE CASCADE,
+  id_association INT REFERENCES association(id) ON DELETE CASCADE,
+  last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Dernier message envoyé
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- Empêcher la création de plusieurs conversations entre une même famille et une même association
+ALTER TABLE conversation ADD CONSTRAINT unique_conversation UNIQUE (id_family, id_association);
+
+-- Stocke les messages échangés dans les conversations
+CREATE TABLE message (
+  id SERIAL PRIMARY KEY,
+  id_conversation INT REFERENCES conversation(id) ON DELETE CASCADE, -- Conversation liée
+  id_sender INT REFERENCES "user"(id) ON DELETE CASCADE, -- Expéditeur du message (utilisateur)
+  content TEXT NOT NULL, -- Contenu du message
+  is_read BOOLEAN DEFAULT FALSE, -- Message lu ou non
+  sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 🔥 Index pour optimiser les requêtes sur la table des messages
+CREATE INDEX idx_message_conversation ON message(id_conversation);
+CREATE INDEX idx_message_sender ON message(id_sender);
+
+
+-- TRIGGER : Mise à jour automatique du dernier message dans une conversation
+CREATE OR REPLACE FUNCTION update_last_message()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE conversation
+    SET last_message_at = CURRENT_TIMESTAMP
+    WHERE id = NEW.id_conversation;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_last_message_trigger
+AFTER INSERT ON message
+FOR EACH ROW
+EXECUTE FUNCTION update_last_message();
 
 -- Fonction pour mettre à jour le timestamp automatiquement lors des modifications
 CREATE OR REPLACE FUNCTION update_timestamp() 

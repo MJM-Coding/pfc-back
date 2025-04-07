@@ -29,6 +29,8 @@ export const verifyToken = (req, res, next) => {
       // Pour toute autre erreur de vérification, renvoyer un statut 403 "Forbidden"
       return res.status(403).json({ message: "Token invalide" });
     }
+// Logguez les informations décodées du token pour vous assurer que tout est correct
+console.log("Token décodé :", user);
 
     // Si le token est valide, ajoute les informations de l'utilisateur décodées à `req.user`
     req.user = {
@@ -38,7 +40,8 @@ export const verifyToken = (req, res, next) => {
       id_family: user.id_family,
       id_association: user.id_association,
     };
-
+ // Vérifiez que les valeurs sont bien assignées
+ console.log("req.user après vérification du token :", req.user);
     next();
   });
 };

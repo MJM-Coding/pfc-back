@@ -13,6 +13,8 @@ import { familyRouter } from "./familyRouter.js"; // router secondaire pour les 
 import { userRouter } from "./userRouter.js"; // router secondaire pour les routes liées aux utilisateurs
 import { createUserController } from "../controllers/createUserController.js";
 import { passwordResetRouter } from "./passwordResetRouter.js";
+import { conversationRouter } from "./conversationRouter.js"; // router secondaire pour les routes liées aux conversations
+import { messageRouter } from "./messageRouter.js";
 
 import { validate } from "../validation/validate.js"; // Importation de la fonction de validation
 import { createSchema } from "../validation/allUser.js"; // Importation du schéma d'inscription JOI
@@ -31,7 +33,8 @@ mainRouter.use("/animal", animalRouter); // toutes les routes commencant par /an
 mainRouter.use("/ask",  verifyToken,  askRouter); // toutes les routes commencant par /ask seront traitées par askRouter
 mainRouter.use("/family", verifyToken, familyRouter); // toutes les routes commencant par /family seront traitées par familyRouter
 mainRouter.use("/user", userRouter);// toutes les routes commencant par /user seront traitées par userRouter
-
+mainRouter.use("/conversation", verifyToken, conversationRouter); // toutes les routes commencant par /conversation seront traitées par conversationRouter
+mainRouter.use("/message", verifyToken, messageRouter); // toutes les routes commencant par /message seront traitées par messageRouter
 
 //! Routes pour la connexion 
 mainRouter.post("/signin", withTryCatch(signinController.signinUser)); // Connexion
@@ -47,6 +50,8 @@ mainRouter.use("/password", passwordResetRouter);
 
 //! Route pour traiter la demande de validation du RNA
 mainRouter.get('/validate-rna/:rnaNumber', withTryCatch(validateRNA));
+
+
 
 
 // *Middleware pour gérer les routes non trouvées
