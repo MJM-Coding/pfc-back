@@ -63,7 +63,7 @@ app.use("/api", mainRouter);
 
 // Démarrage du serveur sur le port spécifié dans .env ou sur 3001 par défaut
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+app.listen(PORT,'0.0.0.0', () => {
   console.log(
     `🚀 Serveur API démarré à l'adresse : http://localhost:${PORT}/api`
   );
